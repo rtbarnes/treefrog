@@ -1,0 +1,14 @@
+# Configuration section
+share = README.md
+clone = ribbit
+
+# Commands section  
+[commands]
+# Test .ribbit configuration file
+echo "Hello from .ribbit config!"
+
+# Create a test file
+echo "This file was created by .ribbit config" > test-config-file.txt
+
+# Show current directory
+pwd

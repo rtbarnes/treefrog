@@ -6,6 +6,11 @@ out
 dist
 *.tgz
 
+# compiled executables
+ribbit
+ribbit.exe
+*.bun-build
+
 # code coverage
 coverage
 *.lcov

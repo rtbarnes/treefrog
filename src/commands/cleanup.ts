@@ -5,7 +5,7 @@ import {
   getCurrentBranch,
   removeWorktree,
 } from "../services/git.js";
-import { printInfo, printSuccess, printError } from "../services/ui.js";
+import { printInfo, printSuccess } from "../services/ui.js";
 import { NotInWorktreeError } from "../types.js";
 
 // Clean up current agent worktree
@@ -34,9 +34,7 @@ export async function handleCleanup(): Promise<void> {
   }
 
   if (!isAgentWorktree) {
-    throw new NotInWorktreeError(
-      "Cleanup must be run from within a ribbit worktree"
-    );
+    throw new NotInWorktreeError("Cleanup must be run from within a ribbit worktree");
   }
 
   // Get current branch name before leaving directory

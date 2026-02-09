@@ -42,10 +42,7 @@ export async function branchExists(branchName: string): Promise<boolean> {
 }
 
 // Create a worktree
-export async function createWorktree(
-  worktreeDir: string,
-  branchName: string
-): Promise<void> {
+export async function createWorktree(worktreeDir: string, branchName: string): Promise<void> {
   const exists = await branchExists(branchName);
 
   if (exists) {
@@ -105,9 +102,7 @@ export async function ensureRibbitWorktree(): Promise<void> {
   // Check if we're in main/master branch (prevent share/clone in main repo)
   const currentBranch = await getCurrentBranch();
   if (currentBranch === "main" || currentBranch === "master") {
-    throw new NotInWorktreeError(
-      "Cannot share/clone files in main/master branch"
-    );
+    throw new NotInWorktreeError("Cannot share/clone files in main/master branch");
   }
 }
 

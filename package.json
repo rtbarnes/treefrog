@@ -1,11 +1,11 @@
 {
   "name": "treefrog",
-  "module": "src/index.ts",
-  "type": "module",
   "private": true,
   "bin": {
     "ribbit": "src/index.ts"
   },
+  "type": "module",
+  "module": "src/index.ts",
   "scripts": {
     "dev": "bun run src/index.ts",
     "build": "bun build --compile --minify --sourcemap src/index.ts --outfile ribbit",
@@ -13,15 +13,21 @@
     "build:macos": "bun build --compile --target=bun-darwin-arm64 --minify --sourcemap src/index.ts --outfile dist/ribbit-macos-arm64 && bun build --compile --target=bun-darwin-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-macos-x64",
     "build:linux": "bun build --compile --target=bun-linux-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-linux-x64 && bun build --compile --target=bun-linux-arm64 --minify --sourcemap src/index.ts --outfile dist/ribbit-linux-arm64",
     "build:windows": "bun build --compile --target=bun-windows-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-windows-x64",
-    "clean": "rm -rf ribbit dist *.bun-build"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+    "clean": "rm -rf ribbit dist *.bun-build",
+    "type": "tsgo --noEmit",
+    "lint": "oxlint",
+    "fmt": "oxfmt --write ."
   },
   "dependencies": {
     "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@typescript/native-preview": "^7.0.0-dev.20260209.1",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
   }
 }

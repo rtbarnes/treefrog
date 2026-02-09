@@ -25,10 +25,7 @@ export async function handleList(): Promise<void> {
 
       // Check if this is a ribbit worktree (repo-name-branch-name pattern)
       const dirName = path.basename(currentWorktree);
-      if (
-        dirName.match(/^[^-]+-.+$/) &&
-        !currentWorktree.includes("/.git/worktrees/")
-      ) {
+      if (dirName.match(/^[^-]+-.+$/) && !currentWorktree.includes("/.git/worktrees/")) {
         // Extract branch name (everything after first dash and repo name)
         const parts = dirName.split("-");
         const branchPart = parts.slice(1).join("-");

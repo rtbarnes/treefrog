@@ -5,9 +5,7 @@ import type { RibbitConfig } from "../types.js";
 import { printInfo, printError } from "./ui.js";
 
 // Parse .ribbit configuration file for settings
-export async function parseRibbitConfig(
-  mainRepoDir: string
-): Promise<RibbitConfig> {
+export async function parseRibbitConfig(mainRepoDir: string): Promise<RibbitConfig> {
   const configFile = path.join(mainRepoDir, ".ribbit");
   const config: RibbitConfig = { commands: [] };
 
@@ -70,7 +68,7 @@ export async function executeRibbitConfig(config: RibbitConfig): Promise<void> {
       try {
         // Use the raw command string directly
         await $`sh -c ${command}`.quiet();
-      } catch (error) {
+      } catch {
         printError(`Command failed: ${command}`);
         printInfo("Continuing with remaining commands...");
       }

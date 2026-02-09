@@ -5,10 +5,7 @@ import { FileNotFoundError } from "../types.js";
 import { printInfo } from "./ui.js";
 
 // Create shared file/directory symlinks
-export async function createSymlinks(
-  shareFiles: string,
-  mainRepoDir: string
-): Promise<void> {
+export async function createSymlinks(shareFiles: string, mainRepoDir: string): Promise<void> {
   if (!shareFiles) return;
 
   const files = shareFiles.split(",").map((f) => f.trim());
@@ -39,18 +36,13 @@ export async function createSymlinks(
         printInfo(`Linked directory: ${file}`);
       }
     } catch {
-      throw new FileNotFoundError(
-        `Shared file or directory does not exist: ${file}`
-      );
+      throw new FileNotFoundError(`Shared file or directory does not exist: ${file}`);
     }
   }
 }
 
 // Copy files/directories from main repo
-export async function copyFiles(
-  cloneFiles: string,
-  mainRepoDir: string
-): Promise<void> {
+export async function copyFiles(cloneFiles: string, mainRepoDir: string): Promise<void> {
   if (!cloneFiles) return;
 
   const files = cloneFiles.split(",").map((f) => f.trim());
@@ -81,9 +73,7 @@ export async function copyFiles(
         printInfo(`Copied directory: ${file}`);
       }
     } catch {
-      throw new FileNotFoundError(
-        `File or directory to clone does not exist: ${file}`
-      );
+      throw new FileNotFoundError(`File or directory to clone does not exist: ${file}`);
     }
   }
 }

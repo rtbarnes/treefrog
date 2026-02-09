@@ -27,9 +27,7 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
 
   // Check if worktree directory already exists
   if (await directoryExists(worktreeDir)) {
-    throw new WorktreeExistsError(
-      `Worktree directory already exists: ${worktreeDir}`
-    );
+    throw new WorktreeExistsError(`Worktree directory already exists: ${worktreeDir}`);
   }
 
   printInfo(`Creating worktree: ${worktreeDir}`);
@@ -75,7 +73,5 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
   printSuccess("Your environment is now agent ready!");
 
   // Note: We can't exec a new shell like in bash, but we can suggest it
-  printInfo(
-    "Run a new shell to stay in this directory, or use 'cd' to navigate here."
-  );
+  printInfo("Run a new shell to stay in this directory, or use 'cd' to navigate here.");
 }

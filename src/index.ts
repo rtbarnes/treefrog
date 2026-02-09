@@ -47,9 +47,7 @@ async function main(): Promise<void> {
       if (error.message.includes("Cleanup must be run")) {
         printError("This command must be run from within a ribbit worktree");
       } else if (error.message.includes("main/master")) {
-        printError(
-          "Share and clone commands are only allowed in ribbit worktrees"
-        );
+        printError("Share and clone commands are only allowed in ribbit worktrees");
       }
     } else if (error instanceof WorktreeExistsError) {
       printError(error.message);

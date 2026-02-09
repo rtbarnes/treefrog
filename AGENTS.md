@@ -18,7 +18,7 @@ CLI tool for managing git worktrees for parallel AI agent coding sessions. Creat
 ### Commands (`src/commands/`)
 
 - `create.ts` - Creates new worktree, applies config, executes commands
-- `cleanup.ts` - Removes worktree (by branch or current directory)
+- `remove.ts` - Removes worktree (by branch or current directory)
 - `list.ts` - Lists active treefrog worktrees
 - `spotlight.ts` - Removes worktree and checks out branch in main repo
 
@@ -52,7 +52,7 @@ CLI tool for managing git worktrees for parallel AI agent coding sessions. Creat
 ### Types (`src/types.ts`)
 
 - `TreefrogConfig` - Configuration structure
-- Command args interfaces (`CreateArgs`, `CleanupArgs`, `SpotlightArgs`)
+- Command args interfaces (`CreateArgs`, `RemoveArgs`, `SpotlightArgs`)
 - Custom errors (`NotInGitRepoError`, `NotInWorktreeError`, `WorktreeExistsError`, `FileNotFoundError`)
 
 ## Patterns

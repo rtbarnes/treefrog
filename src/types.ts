@@ -8,7 +8,7 @@ export interface CreateArgs {
   branchName: string;
 }
 
-export interface CleanupArgs {
+export interface RemoveArgs {
   branchName: string;
 }
 

@@ -39,7 +39,7 @@ async function main(): Promise<void> {
       printError(error.message);
     } else if (error instanceof NotInWorktreeError) {
       printError(error.message);
-      if (error.message.includes("Cleanup must be run")) {
+      if (error.message.includes("Remove must be run")) {
         printError("This command must be run from within a treefrog worktree");
       }
     } else if (error instanceof WorktreeExistsError) {

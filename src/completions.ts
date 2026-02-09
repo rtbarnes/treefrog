@@ -37,8 +37,8 @@ export function registerCompletions(completion: RootCommand): void {
     }
   });
 
-  const cleanupCmd = completion.commands.get("cleanup");
-  cleanupCmd?.argument("branch-name", (complete) => {
+  const removeCmd = completion.commands.get("remove");
+  removeCmd?.argument("branch-name", (complete) => {
     for (const branch of getWorktreeBranches()) {
       complete(branch, "active worktree");
     }

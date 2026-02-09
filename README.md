@@ -69,8 +69,8 @@ treefrog spotlight implement-user-auth
 # List active agent worktrees
 treefrog list
 
-# Clean up current agent worktree (run from agent directory)
-treefrog cleanup
+# Remove current agent worktree (run from agent directory)
+treefrog remove
 ```
 
 ## Shell Completions
@@ -112,7 +112,7 @@ treefrog complete powershell > ~/.treefrog-completion.ps1
 echo '. ~/.treefrog-completion.ps1' >> $PROFILE
 ```
 
-After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog cleanup <TAB>`, or `treefrog spotlight <TAB>`.
+After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog remove <TAB>`, or `treefrog spotlight <TAB>`.
 
 ## What it does
 
@@ -121,7 +121,7 @@ After setup, branch names will autocomplete when typing `treefrog create <TAB>`,
 - Automatically shares/clones files based on `.treefrog` config
 - Drops you in the worktree ready for your AI agent
 - Spotlight command removes worktree and checks out branch in main repo
-- Preserves branches when cleaning up worktrees
+- Preserves branches when removing worktrees
 
 Each agent gets its own directory and branch, solving the problem of multiple AI agents working in parallel on the same repository.
 

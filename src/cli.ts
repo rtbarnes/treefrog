@@ -2,7 +2,7 @@ import { Command } from "commander";
 import tab from "@bomb.sh/tab/commander";
 import {
   handleCreate,
-  handleCleanup,
+  handleRemove,
   handleList,
   handleSpotlight,
 } from "./commands/index.js";
@@ -23,11 +23,11 @@ export function buildProgram(): Command {
     .action((branchName: string) => handleCreate({ branchName }));
 
   program
-    .command("cleanup")
-    .description("Clean up agent worktree (current dir or by branch)")
+    .command("remove")
+    .description("Remove agent worktree (current dir or by branch)")
     .argument("[branch-name]")
     .action((branchName?: string) =>
-      handleCleanup(branchName ? { branchName } : undefined),
+      handleRemove(branchName ? { branchName } : undefined),
     );
 
   program

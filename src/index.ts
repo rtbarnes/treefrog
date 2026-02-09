@@ -1,13 +1,6 @@
 #!/usr/bin/env bun
 
-import { parseCliArgs } from "./cli.js";
-import {
-  handleCreate,
-  handleCleanup,
-  handleList,
-  handleSpotlight,
-} from "./commands/index.js";
-import { handleCompletion } from "./completions.js";
+import { buildProgram } from "./cli.js";
 import { printError } from "./services/ui.js";
 import {
   NotInGitRepoError,
@@ -15,32 +8,33 @@ import {
   WorktreeExistsError,
   FileNotFoundError,
 } from "./types.js";
-import type { CleanupArgs, CreateArgs, SpotlightArgs } from "./types.js";
 
-// Main execution
 async function main(): Promise<void> {
-  if (handleCompletion()) {
-    return;
-  }
-
   try {
-    const parsed = parseCliArgs();
+    const program = buildProgram();
+    program.exitOverride();
 
-    switch (parsed.command) {
-      case "create":
-        await handleCreate(parsed.args as CreateArgs);
-        break;
-      case "cleanup":
-        await handleCleanup(parsed.args as CleanupArgs | undefined);
-        break;
-      case "list":
-        await handleList();
-        break;
-      case "spotlight":
-        await handleSpotlight(parsed.args as SpotlightArgs);
-        break;
+    if (process.argv.length <= 2) {
+      program.help();
+    }
+
+    // tab's commander adapter patches program.parse() to intercept
+    // `complete -- <args>` for runtime completions; parseAsync doesn't
+    // go through that patch, so use parse() when completing.
+    const isCompletion =
+      process.argv.includes("complete") && process.argv.includes("--");
+    if (isCompletion) {
+      program.parse(process.argv);
+    } else {
+      await program.parseAsync(process.argv);
     }
   } catch (error) {
+    // Commander already prints its own messages for these; just exit with the right code
+    const code = error instanceof Error && "code" in error ? (error as any).code : null;
+    if (code?.startsWith("commander.")) {
+      process.exit((error as any).exitCode ?? 1);
+    }
+
     if (error instanceof NotInGitRepoError) {
       printError(error.message);
     } else if (error instanceof NotInWorktreeError) {
@@ -61,7 +55,6 @@ async function main(): Promise<void> {
   }
 }
 
-// Run main function if this file is executed directly
 if (import.meta.main) {
   await main();
 }

@@ -18,20 +18,3 @@ export function printSuccess(message: string): void {
 export function printInfo(message: string): void {
   console.log(`${colors.YELLOW}${message}${colors.NC}`);
 }
-
-// Usage information
-export function printUsage(): void {
-  console.log(`Usage:
-  treefrog create <branch-name>                                   Create new agent worktree
-  treefrog spotlight <branch-name>                                Remove worktree and checkout branch in main repo
-  treefrog cleanup [branch-name]                                   Clean up agent worktree (current or by branch)
-  treefrog list                                                    List active agent worktrees
-  treefrog complete <shell>                                        Setup shell completions (zsh, bash, fish, powershell)
-
-Examples:
-  treefrog create implement-user-auth
-  treefrog spotlight implement-user-auth
-  treefrog cleanup
-  treefrog cleanup implement-user-auth
-  treefrog list`);
-}

@@ -1,60 +1,48 @@
-import type { CleanupArgs, CreateArgs, SpotlightArgs } from "./types.js";
-import { printUsage } from "./services/ui.js";
+import { Command } from "commander";
+import tab from "@bomb.sh/tab/commander";
+import {
+  handleCreate,
+  handleCleanup,
+  handleList,
+  handleSpotlight,
+} from "./commands/index.js";
+import { registerCompletions } from "./completions.js";
 
-export interface ParsedCommand {
-  command: "create" | "cleanup" | "list" | "spotlight";
-  args?: CleanupArgs | CreateArgs | SpotlightArgs;
-}
+export function buildProgram(): Command {
+  const program = new Command();
 
-export function parseCliArgs(): ParsedCommand {
-  const args = process.argv.slice(2);
+  program
+    .name("treefrog")
+    .description("Git worktree manager for agent workflows")
+    .showHelpAfterError();
 
-  if (args.length === 0) {
-    printUsage();
-    process.exit(1);
-  }
+  program
+    .command("create")
+    .description("Create new agent worktree")
+    .argument("<branch-name>")
+    .action((branchName: string) => handleCreate({ branchName }));
 
-  const firstArg = args[0]!; // Safe because we checked args.length > 0 above
+  program
+    .command("cleanup")
+    .description("Clean up agent worktree (current dir or by branch)")
+    .argument("[branch-name]")
+    .action((branchName?: string) =>
+      handleCleanup(branchName ? { branchName } : undefined),
+    );
 
-  switch (firstArg) {
-    case "cleanup":
-      return {
-        command: "cleanup",
-        args: args[1] ? ({ branchName: args[1] } as CleanupArgs) : undefined,
-      };
+  program
+    .command("list")
+    .description("List active agent worktrees")
+    .action(() => handleList());
 
-    case "list":
-      return { command: "list" };
+  program
+    .command("spotlight")
+    .description("Remove worktree and checkout branch in main repo")
+    .argument("<branch-name>")
+    .action((branchName: string) => handleSpotlight({ branchName }));
 
-    case "spotlight":
-      if (!args[1]) {
-        throw new Error("No branch name specified for spotlight");
-      }
-      return {
-        command: "spotlight",
-        args: { branchName: args[1] } as SpotlightArgs,
-      };
+  const completion = tab(program);
+  registerCompletions(completion);
 
-    case "--help":
-    case "-h":
-      printUsage();
-      process.exit(0);
-
-    case "create": {
-      if (!args[1]) {
-        throw new Error("No branch name specified for create");
-      }
-      const createArgs: CreateArgs = { branchName: args[1] };
-
-      // Check for any remaining arguments (shouldn't be any)
-      if (args.length > 2) {
-        throw new Error(`Unknown option: ${args[2]}`);
-      }
-
-      return { command: "create", args: createArgs };
-    }
-
-    default:
-      throw new Error(`Unknown command: ${firstArg}`);
-  }
+  return program;
 }

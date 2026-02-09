@@ -38,31 +38,14 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
   // Change to worktree directory
   process.chdir(worktreeDir);
 
-  // Handle file sharing/copying based on CLI options or config
-  let effectiveShareFiles = args.shareFiles;
-  let effectiveCloneFiles = args.cloneFiles;
-  let fileMode = args.fileMode;
-
-  // Use config settings if CLI options not provided
-  if (!args.shareFiles && config.shareFiles) {
-    effectiveShareFiles = config.shareFiles;
-    fileMode = "share";
-  }
-  if (!args.cloneFiles && config.cloneFiles) {
-    effectiveCloneFiles = config.cloneFiles;
-    // Only set clone mode if share mode isn't already set
-    if (fileMode !== "share") {
-      fileMode = "clone";
-    }
-  }
-
-  // Execute file operations
-  if (fileMode === "share" && effectiveShareFiles) {
+  // Execute file operations from config
+  if (config.shareFiles) {
     printInfo("Creating symlinks for shared files...");
-    await createSymlinks(effectiveShareFiles, mainRepoDir);
-  } else if (fileMode === "clone" && effectiveCloneFiles) {
+    await createSymlinks(config.shareFiles, mainRepoDir);
+  }
+  if (config.cloneFiles) {
     printInfo("Copying files from main repo...");
-    await copyFiles(effectiveCloneFiles, mainRepoDir);
+    await copyFiles(config.cloneFiles, mainRepoDir);
   }
 
   // Execute .treefrog configuration commands if present

@@ -5,8 +5,7 @@ import {
   handleCreate,
   handleCleanup,
   handleList,
-  handleShare,
-  handleClone,
+  handleSpotlight,
 } from "./commands/index.js";
 import { printError } from "./services/ui.js";
 import {
@@ -15,7 +14,7 @@ import {
   WorktreeExistsError,
   FileNotFoundError,
 } from "./types.js";
-import type { CreateArgs, ShareArgs, CloneArgs } from "./types.js";
+import type { CreateArgs, SpotlightArgs } from "./types.js";
 
 // Main execution
 async function main(): Promise<void> {
@@ -32,11 +31,8 @@ async function main(): Promise<void> {
       case "list":
         await handleList();
         break;
-      case "share":
-        await handleShare(parsed.args as ShareArgs);
-        break;
-      case "clone":
-        await handleClone(parsed.args as CloneArgs);
+      case "spotlight":
+        await handleSpotlight(parsed.args as SpotlightArgs);
         break;
     }
   } catch (error) {
@@ -46,8 +42,6 @@ async function main(): Promise<void> {
       printError(error.message);
       if (error.message.includes("Cleanup must be run")) {
         printError("This command must be run from within a treefrog worktree");
-      } else if (error.message.includes("main/master")) {
-        printError("Share and clone commands are only allowed in treefrog worktrees");
       }
     } else if (error instanceof WorktreeExistsError) {
       printError(error.message);

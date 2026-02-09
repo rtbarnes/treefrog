@@ -1,9 +1,9 @@
-import type { CreateArgs, ShareArgs, CloneArgs } from "./types.js";
+import type { CreateArgs, SpotlightArgs } from "./types.js";
 import { printUsage } from "./services/ui.js";
 
 export interface ParsedCommand {
-  command: "create" | "cleanup" | "list" | "share" | "clone";
-  args?: CreateArgs | ShareArgs | CloneArgs;
+  command: "create" | "cleanup" | "list" | "spotlight";
+  args?: CreateArgs | SpotlightArgs;
 }
 
 export function parseCliArgs(): ParsedCommand {
@@ -23,22 +23,13 @@ export function parseCliArgs(): ParsedCommand {
     case "list":
       return { command: "list" };
 
-    case "share":
+    case "spotlight":
       if (!args[1]) {
-        throw new Error("No files specified to share");
+        throw new Error("No branch name specified for spotlight");
       }
       return {
-        command: "share",
-        args: { shareFiles: args[1] } as ShareArgs,
-      };
-
-    case "clone":
-      if (!args[1]) {
-        throw new Error("No files specified to clone");
-      }
-      return {
-        command: "clone",
-        args: { cloneFiles: args[1] } as CloneArgs,
+        command: "spotlight",
+        args: { branchName: args[1] } as SpotlightArgs,
       };
 
     case "--help":
@@ -52,31 +43,9 @@ export function parseCliArgs(): ParsedCommand {
       }
       const createArgs: CreateArgs = { branchName: args[1] };
 
-      // Parse remaining arguments
-      for (let i = 2; i < args.length; i++) {
-        if (args[i] === "--share") {
-          if (createArgs.cloneFiles) {
-            throw new Error("Cannot use both --share and --clone");
-          }
-          if (!args[i + 1]) {
-            throw new Error("--share requires a file list");
-          }
-          createArgs.shareFiles = args[i + 1];
-          createArgs.fileMode = "share";
-          i++; // Skip next argument as it's the file list
-        } else if (args[i] === "--clone") {
-          if (createArgs.shareFiles) {
-            throw new Error("Cannot use both --share and --clone");
-          }
-          if (!args[i + 1]) {
-            throw new Error("--clone requires a file list");
-          }
-          createArgs.cloneFiles = args[i + 1];
-          createArgs.fileMode = "clone";
-          i++; // Skip next argument as it's the file list
-        } else {
-          throw new Error(`Unknown option: ${args[i]}`);
-        }
+      // Check for any remaining arguments (shouldn't be any)
+      if (args.length > 2) {
+        throw new Error(`Unknown option: ${args[2]}`);
       }
 
       return { command: "create", args: createArgs };

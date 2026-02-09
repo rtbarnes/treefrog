@@ -91,19 +91,30 @@ export async function isTreefrogWorktree(): Promise<boolean> {
   return false;
 }
 
-// Ensure we're in a treefrog worktree
-export async function ensureTreefrogWorktree(): Promise<void> {
-  await ensureGitRepository();
+// Checkout a branch
+export async function checkoutBranch(branchName: string): Promise<void> {
+  await $`git checkout ${branchName}`.quiet();
+}
 
-  if (!(await isTreefrogWorktree())) {
-    throw new NotInWorktreeError();
+// Find worktree path by branch name
+export async function findWorktreeByBranch(branchName: string): Promise<string | null> {
+  const worktreeList = await getWorktreeList();
+  const lines = worktreeList.split("\n");
+  
+  let currentWorktree: string | null = null;
+  
+  for (const line of lines) {
+    if (line.startsWith("worktree ")) {
+      currentWorktree = line.substring(9);
+    } else if (line.startsWith("branch refs/heads/")) {
+      const branchRef = line.substring(18);
+      if (branchRef === branchName && currentWorktree) {
+        return currentWorktree;
+      }
+    }
   }
-
-  // Check if we're in main/master branch (prevent share/clone in main repo)
-  const currentBranch = await getCurrentBranch();
-  if (currentBranch === "main" || currentBranch === "master") {
-    throw new NotInWorktreeError("Cannot share/clone files in main/master branch");
-  }
+  
+  return null;
 }
 
 // Find main repository directory from worktree list

@@ -4,27 +4,12 @@ export interface TreefrogConfig {
   commands?: string[];
 }
 
-export interface ParsedArgs {
-  command: string;
-  branchName?: string;
-  shareFiles?: string;
-  cloneFiles?: string;
-  fileMode?: "share" | "clone";
-}
-
 export interface CreateArgs {
   branchName: string;
-  shareFiles?: string;
-  cloneFiles?: string;
-  fileMode?: "share" | "clone";
 }
 
-export interface ShareArgs {
-  shareFiles: string;
-}
-
-export interface CloneArgs {
-  cloneFiles: string;
+export interface SpotlightArgs {
+  branchName: string;
 }
 
 export class NotInGitRepoError extends Error {

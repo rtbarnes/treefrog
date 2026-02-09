@@ -22,20 +22,14 @@ export function printInfo(message: string): void {
 // Usage information
 export function printUsage(): void {
   console.log(`Usage:
-  treefrog create <branch-name> [--share|--clone file1,file2,...]  Create new agent worktree
-  treefrog share <file1,file2,...>                                 Share additional files in current worktree
-  treefrog clone <file1,file2,...>                                 Clone additional files in current worktree
-  treefrog cleanup                                                  Clean up current agent worktree
-  treefrog list                                                     List active agent worktrees
-
-Options:
-  --share   Symlink files from main repo (changes affect main repo)
-  --clone   Copy files from main repo (independent copies)
+  treefrog create <branch-name>                                   Create new agent worktree
+  treefrog spotlight <branch-name>                                Remove worktree and checkout branch in main repo
+  treefrog cleanup                                                 Clean up current agent worktree
+  treefrog list                                                    List active agent worktrees
 
 Examples:
-  treefrog create implement-user-auth --share .env,.env.local
-  treefrog create fix-login-bug --clone .env,.env.local
-  treefrog share .env.production,config/database.yml
-  treefrog clone secrets.json
-  treefrog cleanup`);
+  treefrog create implement-user-auth
+  treefrog spotlight implement-user-auth
+  treefrog cleanup
+  treefrog list`);
 }

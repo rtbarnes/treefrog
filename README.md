@@ -60,20 +60,11 @@ bun run src/index.ts
 ## Usage
 
 ```bash
-# Create new agent worktree with shared files (symlinked)
-treefrog create implement-user-auth --share .env,.env.local
+# Create new agent worktree (uses .treefrog config for file sharing/cloning)
+treefrog create implement-user-auth
 
-# Create agent worktree with copied files (independent)
-treefrog create fix-login-bug --clone .env,.env.local
-
-# Create agent worktree without shared files
-treefrog create fix-login-bug
-
-# Share additional files in existing worktree (run from agent directory)
-treefrog share .env.production,config/database.yml
-
-# Copy additional files to existing worktree (run from agent directory)
-treefrog clone secrets.json
+# Spotlight a worktree branch: remove worktree and checkout branch in main repo
+treefrog spotlight implement-user-auth
 
 # List active agent worktrees
 treefrog list
@@ -86,9 +77,9 @@ treefrog cleanup
 
 - Creates isolated git worktree: `../repo-branch-name/`
 - Creates new branch with your specified name or uses existing branch
-- Symlinks shared files from main repo
+- Automatically shares/clones files based on `.treefrog` config
 - Drops you in the worktree ready for your AI agent
-- Allows adding more shared/copied files after worktree creation
+- Spotlight command removes worktree and checks out branch in main repo
 - Preserves branches when cleaning up worktrees
 
 Each agent gets its own directory and branch, solving the problem of multiple AI agents working in parallel on the same repository.
@@ -189,14 +180,10 @@ npm run dev &
 
 ### Configuration Options
 
-- `share = file1,file2,...` - Files to symlink from main repo (CLI `--share` takes precedence)
-- `clone = file1,file2,...` - Files to copy from main repo (CLI `--clone` takes precedence)
+- `share = file1,file2,...` - Files to symlink from main repo
+- `clone = file1,file2,...` - Files to copy from main repo
 - `[commands]` section - Bash commands to execute after worktree creation
 
-### Precedence
-
-1. CLI options (`--share`, `--clone`) override config file settings
-2. If no CLI options provided, config file settings are used
-3. Commands in `[commands]` section always execute after file operations
+Both `share` and `clone` directives are applied when creating a worktree. Commands in `[commands]` section always execute after file operations.
 
 Comments (lines starting with `#`) and empty lines are ignored throughout the file.

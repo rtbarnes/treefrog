@@ -1,6 +1,4 @@
 # Configuration section
-share = README.md
-clone = treefrog
 
 # Commands section  
 [commands]

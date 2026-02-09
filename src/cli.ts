@@ -46,12 +46,14 @@ export function parseCliArgs(): ParsedCommand {
       printUsage();
       process.exit(0);
 
-    default:
-      // Create command
-      const createArgs: CreateArgs = { branchName: firstArg };
+    case "create": {
+      if (!args[1]) {
+        throw new Error("No branch name specified for create");
+      }
+      const createArgs: CreateArgs = { branchName: args[1] };
 
       // Parse remaining arguments
-      for (let i = 1; i < args.length; i++) {
+      for (let i = 2; i < args.length; i++) {
         if (args[i] === "--share") {
           if (createArgs.cloneFiles) {
             throw new Error("Cannot use both --share and --clone");
@@ -78,5 +80,9 @@ export function parseCliArgs(): ParsedCommand {
       }
 
       return { command: "create", args: createArgs };
+    }
+
+    default:
+      throw new Error(`Unknown command: ${firstArg}`);
   }
 }

@@ -14,7 +14,7 @@ import {
   WorktreeExistsError,
   FileNotFoundError,
 } from "./types.js";
-import type { CreateArgs, SpotlightArgs } from "./types.js";
+import type { CleanupArgs, CreateArgs, SpotlightArgs } from "./types.js";
 
 // Main execution
 async function main(): Promise<void> {
@@ -26,7 +26,7 @@ async function main(): Promise<void> {
         await handleCreate(parsed.args as CreateArgs);
         break;
       case "cleanup":
-        await handleCleanup();
+        await handleCleanup(parsed.args as CleanupArgs | undefined);
         break;
       case "list":
         await handleList();

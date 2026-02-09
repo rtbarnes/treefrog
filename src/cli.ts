@@ -1,9 +1,9 @@
-import type { CreateArgs, SpotlightArgs } from "./types.js";
+import type { CleanupArgs, CreateArgs, SpotlightArgs } from "./types.js";
 import { printUsage } from "./services/ui.js";
 
 export interface ParsedCommand {
   command: "create" | "cleanup" | "list" | "spotlight";
-  args?: CreateArgs | SpotlightArgs;
+  args?: CleanupArgs | CreateArgs | SpotlightArgs;
 }
 
 export function parseCliArgs(): ParsedCommand {
@@ -18,7 +18,10 @@ export function parseCliArgs(): ParsedCommand {
 
   switch (firstArg) {
     case "cleanup":
-      return { command: "cleanup" };
+      return {
+        command: "cleanup",
+        args: args[1] ? ({ branchName: args[1] } as CleanupArgs) : undefined,
+      };
 
     case "list":
       return { command: "list" };

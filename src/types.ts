@@ -8,6 +8,10 @@ export interface CreateArgs {
   branchName: string;
 }
 
+export interface CleanupArgs {
+  branchName: string;
+}
+
 export interface SpotlightArgs {
   branchName: string;
 }

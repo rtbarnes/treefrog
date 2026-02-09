@@ -7,8 +7,8 @@ dist
 *.tgz
 
 # compiled executables
-ribbit
-ribbit.exe
+treefrog
+treefrog.exe
 *.bun-build
 
 # code coverage

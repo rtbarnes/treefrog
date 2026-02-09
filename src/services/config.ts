@@ -1,13 +1,13 @@
 import { $ } from "bun";
 import fs from "fs/promises";
 import path from "path";
-import type { RibbitConfig } from "../types.js";
+import type { TreefrogConfig } from "../types.js";
 import { printInfo, printError } from "./ui.js";
 
-// Parse .ribbit configuration file for settings
-export async function parseRibbitConfig(mainRepoDir: string): Promise<RibbitConfig> {
-  const configFile = path.join(mainRepoDir, ".ribbit");
-  const config: RibbitConfig = { commands: [] };
+// Parse .treefrog configuration file for settings
+export async function parseTreefrogConfig(mainRepoDir: string): Promise<TreefrogConfig> {
+  const configFile = path.join(mainRepoDir, ".treefrog");
+  const config: TreefrogConfig = { commands: [] };
 
   try {
     const content = await fs.readFile(configFile, "utf-8");
@@ -54,8 +54,8 @@ export async function parseRibbitConfig(mainRepoDir: string): Promise<RibbitConf
   return config;
 }
 
-// Execute commands from .ribbit configuration file
-export async function executeRibbitConfig(config: RibbitConfig): Promise<void> {
+// Execute commands from .treefrog configuration file
+export async function executeTreefrogConfig(config: TreefrogConfig): Promise<void> {
   if (!config.commands || config.commands.length === 0) {
     return;
   }

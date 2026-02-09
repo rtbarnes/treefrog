@@ -9,7 +9,7 @@ export async function handleList(): Promise<void> {
   const worktreeList = await getWorktreeList();
   let foundAgents = false;
 
-  printInfo("Active ribbit worktrees:");
+  printInfo("Active treefrog worktrees:");
   console.log();
 
   // Parse worktree list and show agent worktrees
@@ -23,7 +23,7 @@ export async function handleList(): Promise<void> {
     } else if (line.startsWith("branch ")) {
       currentBranch = line.substring(7);
 
-      // Check if this is a ribbit worktree (repo-name-branch-name pattern)
+      // Check if this is a treefrog worktree (repo-name-branch-name pattern)
       const dirName = path.basename(currentWorktree);
       if (dirName.match(/^[^-]+-.+$/) && !currentWorktree.includes("/.git/worktrees/")) {
         // Extract branch name (everything after first dash and repo name)
@@ -39,6 +39,6 @@ export async function handleList(): Promise<void> {
   }
 
   if (!foundAgents) {
-    printInfo("No active ribbit worktrees found");
+    printInfo("No active treefrog worktrees found");
   }
 }

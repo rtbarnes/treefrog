@@ -2,18 +2,18 @@
   "name": "treefrog",
   "private": true,
   "bin": {
-    "ribbit": "src/index.ts"
+    "treefrog": "src/index.ts"
   },
   "type": "module",
   "module": "src/index.ts",
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build --compile --minify --sourcemap src/index.ts --outfile ribbit",
+    "build": "bun build --compile --minify --sourcemap src/index.ts --outfile treefrog",
     "build:all": "bun run build:macos && bun run build:linux && bun run build:windows",
-    "build:macos": "bun build --compile --target=bun-darwin-arm64 --minify --sourcemap src/index.ts --outfile dist/ribbit-macos-arm64 && bun build --compile --target=bun-darwin-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-macos-x64",
-    "build:linux": "bun build --compile --target=bun-linux-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-linux-x64 && bun build --compile --target=bun-linux-arm64 --minify --sourcemap src/index.ts --outfile dist/ribbit-linux-arm64",
-    "build:windows": "bun build --compile --target=bun-windows-x64 --minify --sourcemap src/index.ts --outfile dist/ribbit-windows-x64",
-    "clean": "rm -rf ribbit dist *.bun-build",
+    "build:macos": "bun build --compile --target=bun-darwin-arm64 --minify --sourcemap src/index.ts --outfile dist/treefrog-macos-arm64 && bun build --compile --target=bun-darwin-x64 --minify --sourcemap src/index.ts --outfile dist/treefrog-macos-x64",
+    "build:linux": "bun build --compile --target=bun-linux-x64 --minify --sourcemap src/index.ts --outfile dist/treefrog-linux-x64 && bun build --compile --target=bun-linux-arm64 --minify --sourcemap src/index.ts --outfile dist/treefrog-linux-arm64",
+    "build:windows": "bun build --compile --target=bun-windows-x64 --minify --sourcemap src/index.ts --outfile dist/treefrog-windows-x64",
+    "clean": "rm -rf treefrog dist *.bun-build",
     "type": "tsgo --noEmit",
     "lint": "oxlint",
     "fmt": "oxfmt --write ."

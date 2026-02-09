@@ -1,0 +1,14 @@
+# Configuration section
+share = README.md
+clone = treefrog
+
+# Commands section  
+[commands]
+# Test .treefrog configuration file
+echo "Hello from .treefrog config!"
+
+# Create a test file
+echo "This file was created by .treefrog config" > test-config-file.txt
+
+# Show current directory
+pwd

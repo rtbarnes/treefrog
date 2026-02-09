@@ -69,8 +69,8 @@ export async function removeWorktree(worktreeDir: string): Promise<void> {
   await $`git worktree remove ${worktreeDir} --force`.quiet();
 }
 
-// Check if current directory is a ribbit worktree
-export async function isRibbitWorktree(): Promise<boolean> {
+// Check if current directory is a treefrog worktree
+export async function isTreefrogWorktree(): Promise<boolean> {
   const currentDir = process.cwd();
   const worktreeList = await getWorktreeList();
 
@@ -91,11 +91,11 @@ export async function isRibbitWorktree(): Promise<boolean> {
   return false;
 }
 
-// Ensure we're in a ribbit worktree
-export async function ensureRibbitWorktree(): Promise<void> {
+// Ensure we're in a treefrog worktree
+export async function ensureTreefrogWorktree(): Promise<void> {
   await ensureGitRepository();
 
-  if (!(await isRibbitWorktree())) {
+  if (!(await isTreefrogWorktree())) {
     throw new NotInWorktreeError();
   }
 

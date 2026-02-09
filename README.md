@@ -1,10 +1,10 @@
-# ribbit
+# treefrog
 
 A simple tool for managing AI agent coding sessions with git worktrees.
 
 ## Demo
 
-![ribbit demo](ribbit-demo.gif)
+![treefrog demo](treefrog-demo.gif)
 
 ## Installation
 
@@ -14,27 +14,27 @@ Download the appropriate binary for your platform from the releases page and mak
 
 ```bash
 # macOS ARM64 (Apple Silicon)
-curl -L -o ribbit https://github.com/your-username/treefrog/releases/latest/download/ribbit-macos-arm64
-chmod +x ribbit
-sudo mv ribbit /usr/local/bin/
+curl -L -o treefrog https://github.com/your-username/treefrog/releases/latest/download/treefrog-macos-arm64
+chmod +x treefrog
+sudo mv treefrog /usr/local/bin/
 
 # macOS x64 (Intel)
-curl -L -o ribbit https://github.com/your-username/treefrog/releases/latest/download/ribbit-macos-x64
-chmod +x ribbit
-sudo mv ribbit /usr/local/bin/
+curl -L -o treefrog https://github.com/your-username/treefrog/releases/latest/download/treefrog-macos-x64
+chmod +x treefrog
+sudo mv treefrog /usr/local/bin/
 
 # Linux x64
-curl -L -o ribbit https://github.com/your-username/treefrog/releases/latest/download/ribbit-linux-x64
-chmod +x ribbit
-sudo mv ribbit /usr/local/bin/
+curl -L -o treefrog https://github.com/your-username/treefrog/releases/latest/download/treefrog-linux-x64
+chmod +x treefrog
+sudo mv treefrog /usr/local/bin/
 
 # Linux ARM64
-curl -L -o ribbit https://github.com/your-username/treefrog/releases/latest/download/ribbit-linux-arm64
-chmod +x ribbit
-sudo mv ribbit /usr/local/bin/
+curl -L -o treefrog https://github.com/your-username/treefrog/releases/latest/download/treefrog-linux-arm64
+chmod +x treefrog
+sudo mv treefrog /usr/local/bin/
 
 # Windows x64
-# Download ribbit-windows-x64.exe and add to your PATH
+# Download treefrog-windows-x64.exe and add to your PATH
 ```
 
 ### Option 2: Build from Source
@@ -46,7 +46,7 @@ git clone https://github.com/your-username/treefrog.git
 cd treefrog
 bun install
 bun run build
-sudo cp ribbit /usr/local/bin/ribbit
+sudo cp treefrog /usr/local/bin/treefrog
 ```
 
 ### Option 3: Run with Bun
@@ -61,25 +61,25 @@ bun run src/index.ts
 
 ```bash
 # Create new agent worktree with shared files (symlinked)
-ribbit implement-user-auth --share .env,.env.local
+treefrog create implement-user-auth --share .env,.env.local
 
 # Create agent worktree with copied files (independent)
-ribbit fix-login-bug --clone .env,.env.local
+treefrog create fix-login-bug --clone .env,.env.local
 
 # Create agent worktree without shared files
-ribbit fix-login-bug
+treefrog create fix-login-bug
 
 # Share additional files in existing worktree (run from agent directory)
-ribbit share .env.production,config/database.yml
+treefrog share .env.production,config/database.yml
 
 # Copy additional files to existing worktree (run from agent directory)
-ribbit clone secrets.json
+treefrog clone secrets.json
 
 # List active agent worktrees
-ribbit list
+treefrog list
 
 # Clean up current agent worktree (run from agent directory)
-ribbit cleanup
+treefrog cleanup
 ```
 
 ## What it does
@@ -108,7 +108,7 @@ This project uses [Bun](https://bun.sh) to create standalone executables that bu
 # Install dependencies
 bun install
 
-# Build for current platform (creates ./ribbit)
+# Build for current platform (creates ./treefrog)
 bun run build
 
 # Build for all supported platforms
@@ -122,13 +122,13 @@ bun run build:windows  # Windows x64
 
 ### Build Output
 
-- **Local builds**: `ribbit` (current platform executable)
-- **Cross-platform builds**: `dist/ribbit-{platform}-{arch}`
-  - `dist/ribbit-macos-arm64`
-  - `dist/ribbit-macos-x64`
-  - `dist/ribbit-linux-x64`
-  - `dist/ribbit-linux-arm64`
-  - `dist/ribbit-windows-x64.exe`
+- **Local builds**: `treefrog` (current platform executable)
+- **Cross-platform builds**: `dist/treefrog-{platform}-{arch}`
+  - `dist/treefrog-macos-arm64`
+  - `dist/treefrog-macos-x64`
+  - `dist/treefrog-linux-x64`
+  - `dist/treefrog-linux-arm64`
+  - `dist/treefrog-windows-x64.exe`
 
 ### Build Features
 
@@ -163,11 +163,11 @@ bun run tsc --noEmit
 
 ## Configuration
 
-You can create a `.ribbit` file in your repository root to configure default file sharing and run commands automatically when creating new worktrees.
+You can create a `.treefrog` file in your repository root to configure default file sharing and run commands automatically when creating new worktrees.
 
-### .ribbit file format
+### .treefrog file format
 
-The `.ribbit` file supports configuration directives and command sections:
+The `.treefrog` file supports configuration directives and command sections:
 
 ```bash
 # Configuration section (at the top)

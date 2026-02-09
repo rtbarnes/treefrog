@@ -34,13 +34,13 @@ export async function handleCleanup(): Promise<void> {
   }
 
   if (!isAgentWorktree) {
-    throw new NotInWorktreeError("Cleanup must be run from within a ribbit worktree");
+    throw new NotInWorktreeError("Cleanup must be run from within a treefrog worktree");
   }
 
   // Get current branch name before leaving directory
   const branchName = await getCurrentBranch();
 
-  printInfo(`Cleaning up ribbit worktree: ${path.basename(currentDir)}`);
+  printInfo(`Cleaning up treefrog worktree: ${path.basename(currentDir)}`);
   printInfo(`Branch: ${branchName}`);
 
   // Move to main repository directory first

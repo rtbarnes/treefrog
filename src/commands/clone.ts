@@ -1,11 +1,11 @@
 import type { CloneArgs } from "../types.js";
-import { ensureRibbitWorktree, findMainRepo } from "../services/git.js";
+import { ensureTreefrogWorktree, findMainRepo } from "../services/git.js";
 import { copyFiles } from "../services/fs.js";
 import { printInfo, printSuccess } from "../services/ui.js";
 
 // Clone additional files to current worktree
 export async function handleClone(args: CloneArgs): Promise<void> {
-  await ensureRibbitWorktree();
+  await ensureTreefrogWorktree();
 
   const mainRepoDir = await findMainRepo();
   printInfo("Copying files from main repo...");

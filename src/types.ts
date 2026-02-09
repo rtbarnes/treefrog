@@ -1,4 +1,4 @@
-export interface RibbitConfig {
+export interface TreefrogConfig {
   shareFiles?: string;
   cloneFiles?: string;
   commands?: string[];
@@ -35,7 +35,7 @@ export class NotInGitRepoError extends Error {
 }
 
 export class NotInWorktreeError extends Error {
-  constructor(message = "Not in a ribbit worktree directory") {
+  constructor(message = "Not in a treefrog worktree directory") {
     super(message);
     this.name = "NotInWorktreeError";
   }

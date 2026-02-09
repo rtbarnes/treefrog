@@ -7,7 +7,7 @@ import {
   getMainRepoDir,
   createWorktree,
 } from "../services/git.js";
-import { parseRibbitConfig, executeRibbitConfig } from "../services/config.js";
+import { parseTreefrogConfig, executeTreefrogConfig } from "../services/config.js";
 import { createSymlinks, copyFiles, directoryExists } from "../services/fs.js";
 import { printInfo, printSuccess } from "../services/ui.js";
 
@@ -18,8 +18,8 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
   const repoName = await getRepoName();
   const mainRepoDir = await getMainRepoDir();
 
-  // Parse .ribbit configuration file
-  const config = await parseRibbitConfig(mainRepoDir);
+  // Parse .treefrog configuration file
+  const config = await parseTreefrogConfig(mainRepoDir);
 
   // Sanitize branch name for directory naming (replace / with -)
   const sanitizedBranchName = args.branchName.replace(/\//g, "-");
@@ -65,8 +65,8 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
     await copyFiles(effectiveCloneFiles, mainRepoDir);
   }
 
-  // Execute .ribbit configuration commands if present
-  await executeRibbitConfig(config);
+  // Execute .treefrog configuration commands if present
+  await executeTreefrogConfig(config);
 
   printSuccess("Worktree created successfully!");
   printSuccess(`You are now in: ${process.cwd()}`);

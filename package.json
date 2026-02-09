@@ -19,6 +19,7 @@
     "fmt": "oxfmt --write ."
   },
   "dependencies": {
+    "@bomb.sh/tab": "^0.0.13",
     "commander": "^14.0.0"
   },
   "devDependencies": {

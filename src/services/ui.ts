@@ -26,6 +26,7 @@ export function printUsage(): void {
   treefrog spotlight <branch-name>                                Remove worktree and checkout branch in main repo
   treefrog cleanup [branch-name]                                   Clean up agent worktree (current or by branch)
   treefrog list                                                    List active agent worktrees
+  treefrog complete <shell>                                        Setup shell completions (zsh, bash, fish, powershell)
 
 Examples:
   treefrog create implement-user-auth

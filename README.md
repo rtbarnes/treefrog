@@ -73,6 +73,47 @@ treefrog list
 treefrog cleanup
 ```
 
+## Shell Completions
+
+treefrog includes shell autocomplete support for branch names and commands. Set up completions for your shell:
+
+### zsh
+
+```bash
+# One-time setup
+source <(treefrog complete zsh)
+
+# Permanent setup
+treefrog complete zsh > ~/.treefrog-completion.zsh
+echo 'source ~/.treefrog-completion.zsh' >> ~/.zshrc
+```
+
+### bash
+
+```bash
+# One-time setup
+source <(treefrog complete bash)
+
+# Permanent setup
+treefrog complete bash > ~/.treefrog-completion.bash
+echo 'source ~/.treefrog-completion.bash' >> ~/.bashrc
+```
+
+### fish
+
+```bash
+treefrog complete fish > ~/.config/fish/completions/treefrog.fish
+```
+
+### PowerShell
+
+```powershell
+treefrog complete powershell > ~/.treefrog-completion.ps1
+echo '. ~/.treefrog-completion.ps1' >> $PROFILE
+```
+
+After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog cleanup <TAB>`, or `treefrog spotlight <TAB>`.
+
 ## What it does
 
 - Creates isolated git worktree: `../repo-branch-name/`

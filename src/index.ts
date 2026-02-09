@@ -7,6 +7,7 @@ import {
   handleList,
   handleSpotlight,
 } from "./commands/index.js";
+import { handleCompletion } from "./completions.js";
 import { printError } from "./services/ui.js";
 import {
   NotInGitRepoError,
@@ -18,6 +19,10 @@ import type { CleanupArgs, CreateArgs, SpotlightArgs } from "./types.js";
 
 // Main execution
 async function main(): Promise<void> {
+  if (handleCompletion()) {
+    return;
+  }
+
   try {
     const parsed = parseCliArgs();
 

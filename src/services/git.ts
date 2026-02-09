@@ -1,6 +1,6 @@
 import { $ } from "bun";
 import path from "path";
-import { NotInGitRepoError, NotInWorktreeError } from "../types.js";
+import { NotInGitRepoError } from "../types.js";
 
 // Check if we're in a git repository
 export async function isGitRepository(): Promise<boolean> {
@@ -100,9 +100,9 @@ export async function checkoutBranch(branchName: string): Promise<void> {
 export async function findWorktreeByBranch(branchName: string): Promise<string | null> {
   const worktreeList = await getWorktreeList();
   const lines = worktreeList.split("\n");
-  
+
   let currentWorktree: string | null = null;
-  
+
   for (const line of lines) {
     if (line.startsWith("worktree ")) {
       currentWorktree = line.substring(9);
@@ -113,7 +113,7 @@ export async function findWorktreeByBranch(branchName: string): Promise<string |
       }
     }
   }
-  
+
   return null;
 }
 

@@ -7,7 +7,7 @@ import {
   removeWorktree,
   checkoutBranch,
 } from "../services/git.js";
-import { printInfo, printSuccess, printError } from "../services/ui.js";
+import { printInfo, printSuccess } from "../services/ui.js";
 
 // Spotlight a worktree branch: remove worktree and checkout branch in main repo
 export async function handleSpotlight(args: SpotlightArgs): Promise<void> {

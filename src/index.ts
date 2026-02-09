@@ -21,8 +21,7 @@ async function main(): Promise<void> {
     // tab's commander adapter patches program.parse() to intercept
     // `complete -- <args>` for runtime completions; parseAsync doesn't
     // go through that patch, so use parse() when completing.
-    const isCompletion =
-      process.argv.includes("complete") && process.argv.includes("--");
+    const isCompletion = process.argv.includes("complete") && process.argv.includes("--");
     if (isCompletion) {
       program.parse(process.argv);
     } else {

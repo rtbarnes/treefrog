@@ -24,16 +24,12 @@ export async function handleRemove(args?: RemoveArgs): Promise<void> {
 async function removeByBranch(branchName: string): Promise<void> {
   const worktreePath = await findWorktreeByBranch(branchName);
   if (!worktreePath) {
-    throw new NotInWorktreeError(
-      `No worktree found for branch '${branchName}'`
-    );
+    throw new NotInWorktreeError(`No worktree found for branch '${branchName}'`);
   }
 
   const dirName = path.basename(worktreePath);
   if (!dirName.match(/^[^-]+-.+$/)) {
-    throw new NotInWorktreeError(
-      `'${dirName}' does not appear to be a treefrog worktree`
-    );
+    throw new NotInWorktreeError(`'${dirName}' does not appear to be a treefrog worktree`);
   }
 
   printInfo(`Removing treefrog worktree: ${dirName}`);
@@ -68,9 +64,7 @@ async function removeFromWorktree(): Promise<void> {
   }
 
   if (!isAgentWorktree) {
-    throw new NotInWorktreeError(
-      "Remove must be run from within a treefrog worktree"
-    );
+    throw new NotInWorktreeError("Remove must be run from within a treefrog worktree");
   }
 
   const branchName = await getCurrentBranch();

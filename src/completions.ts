@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import type { RootCommand } from "@bomb.sh/tab";
+import type { RootCommand, Complete } from "@bomb.sh/tab";
 
 function getLocalBranches(): string[] {
   try {
@@ -31,21 +31,21 @@ function getWorktreeBranches(): string[] {
 
 export function registerCompletions(completion: RootCommand): void {
   const createCmd = completion.commands.get("create");
-  createCmd?.argument("branch-name", (complete) => {
+  createCmd?.argument("branch-name", (complete: Complete) => {
     for (const branch of getLocalBranches()) {
       complete(branch, "");
     }
   });
 
   const removeCmd = completion.commands.get("remove");
-  removeCmd?.argument("branch-name", (complete) => {
+  removeCmd?.argument("branch-name", (complete: Complete) => {
     for (const branch of getWorktreeBranches()) {
       complete(branch, "active worktree");
     }
   });
 
   const spotlightCmd = completion.commands.get("spotlight");
-  spotlightCmd?.argument("branch-name", (complete) => {
+  spotlightCmd?.argument("branch-name", (complete: Complete) => {
     for (const branch of getWorktreeBranches()) {
       complete(branch, "active worktree");
     }

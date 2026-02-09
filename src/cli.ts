@@ -1,11 +1,6 @@
 import { Command } from "commander";
 import tab from "@bomb.sh/tab/commander";
-import {
-  handleCreate,
-  handleRemove,
-  handleList,
-  handleSpotlight,
-} from "./commands/index.js";
+import { handleCreate, handleRemove, handleList, handleSpotlight } from "./commands/index.js";
 import { registerCompletions } from "./completions.js";
 
 export function buildProgram(): Command {
@@ -26,9 +21,7 @@ export function buildProgram(): Command {
     .command("remove")
     .description("Remove agent worktree (current dir or by branch)")
     .argument("[branch-name]")
-    .action((branchName?: string) =>
-      handleRemove(branchName ? { branchName } : undefined),
-    );
+    .action((branchName?: string) => handleRemove(branchName ? { branchName } : undefined));
 
   program
     .command("list")

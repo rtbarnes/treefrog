@@ -27,4 +27,42 @@ describe("treefrog cli", () => {
 
     expect(result.exitCode).not.toBe(0);
   });
+
+  test("'c' alias works for create", async () => {
+    repo = await createTestRepo();
+    const result = await runCli(["c", "alias-branch"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Worktree created successfully");
+  });
+
+  test("'rm' alias works for remove", async () => {
+    repo = await createTestRepo();
+    await runCli(["create", "rm-alias"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    const result = await runCli(["rm", "rm-alias"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Removal completed");
+  });
+
+  test("'ls' alias works for list", async () => {
+    repo = await createTestRepo();
+    const result = await runCli(["ls"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Active treefrog worktrees");
+  });
 });

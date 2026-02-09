@@ -13,18 +13,21 @@ export function buildProgram(): Command {
 
   program
     .command("create")
+    .alias("c")
     .description("Create new agent worktree")
     .argument("<branch-name>")
     .action((branchName: string) => handleCreate({ branchName }));
 
   program
     .command("remove")
+    .alias("rm")
     .description("Remove agent worktree (current dir or by branch)")
     .argument("[branch-name]")
     .action((branchName?: string) => handleRemove(branchName ? { branchName } : undefined));
 
   program
     .command("list")
+    .alias("ls")
     .description("List active agent worktrees")
     .action(() => handleList());
 

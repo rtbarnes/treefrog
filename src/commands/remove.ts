@@ -5,6 +5,7 @@ import {
   getCurrentBranch,
   findWorktreeByBranch,
   removeWorktree,
+  isTreefrogPath,
 } from "../services/git.js";
 import { printInfo, printSuccess } from "../services/ui.js";
 import { NotInWorktreeError } from "../types.js";
@@ -27,10 +28,13 @@ async function removeByBranch(branchName: string): Promise<void> {
     throw new NotInWorktreeError(`No worktree found for branch '${branchName}'`);
   }
 
-  const dirName = path.basename(worktreePath);
-  if (!dirName.match(/^[^-]+-.+$/)) {
-    throw new NotInWorktreeError(`'${dirName}' does not appear to be a treefrog worktree`);
+  if (!isTreefrogPath(worktreePath)) {
+    throw new NotInWorktreeError(
+      `'${path.basename(worktreePath)}' does not appear to be a treefrog worktree`,
+    );
   }
+
+  const dirName = path.basename(worktreePath);
 
   printInfo(`Removing treefrog worktree: ${dirName}`);
   printInfo(`Branch: ${branchName}`);
@@ -44,27 +48,19 @@ async function removeByBranch(branchName: string): Promise<void> {
 
 async function removeFromWorktree(): Promise<void> {
   const currentDir = process.cwd();
+
+  if (!isTreefrogPath(currentDir)) {
+    throw new NotInWorktreeError("Remove must be run from within a treefrog worktree");
+  }
+
   const worktreeList = await getWorktreeList();
-  let isAgentWorktree = false;
   let mainRepoDir = "";
 
   const lines = worktreeList.split("\n");
   for (const line of lines) {
-    if (line.startsWith("worktree ")) {
-      const worktreePath = line.substring(9);
-      if (currentDir === worktreePath) {
-        const dirName = path.basename(currentDir);
-        if (dirName.match(/^[^-]+-.+$/)) {
-          isAgentWorktree = true;
-        }
-      } else if (!mainRepoDir) {
-        mainRepoDir = worktreePath;
-      }
+    if (line.startsWith("worktree ") && !mainRepoDir) {
+      mainRepoDir = line.substring(9);
     }
-  }
-
-  if (!isAgentWorktree) {
-    throw new NotInWorktreeError("Remove must be run from within a treefrog worktree");
   }
 
   const branchName = await getCurrentBranch();

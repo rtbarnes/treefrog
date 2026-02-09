@@ -3,8 +3,8 @@ import type { CreateArgs } from "../types.js";
 import { WorktreeExistsError } from "../types.js";
 import {
   ensureGitRepository,
-  getRepoName,
   getMainRepoDir,
+  getWorktreeBaseDir,
   createWorktree,
 } from "../services/git.js";
 import { parseTreefrogConfig, executeTreefrogConfig } from "../services/config.js";
@@ -15,15 +15,15 @@ import { printInfo, printSuccess } from "../services/ui.js";
 export async function handleCreate(args: CreateArgs): Promise<void> {
   await ensureGitRepository();
 
-  const repoName = await getRepoName();
   const mainRepoDir = await getMainRepoDir();
+  const baseDir = await getWorktreeBaseDir();
 
   // Parse .treefrog configuration file
   const config = await parseTreefrogConfig(mainRepoDir);
 
   // Sanitize branch name for directory naming (replace / with -)
   const sanitizedBranchName = args.branchName.replace(/\//g, "-");
-  const worktreeDir = path.join("..", `${repoName}-${sanitizedBranchName}`);
+  const worktreeDir = path.join(baseDir, sanitizedBranchName);
 
   // Check if worktree directory already exists
   if (await directoryExists(worktreeDir)) {

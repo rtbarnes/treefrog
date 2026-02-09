@@ -1,6 +1,14 @@
 import { $ } from "bun";
+import fs from "fs";
+import os from "os";
 import path from "path";
 import { NotInGitRepoError } from "../types.js";
+
+// Resolve symlinks in tmpdir (macOS /var -> /private/var) so paths match git output
+const resolvedTmpdir = fs.realpathSync(os.tmpdir());
+const TREEFROG_BASE = process.env.TREEFROG_BASE
+  ? process.env.TREEFROG_BASE
+  : path.join(resolvedTmpdir, "treefrog");
 
 // Check if we're in a git repository
 export async function isGitRepository(): Promise<boolean> {
@@ -69,22 +77,27 @@ export async function removeWorktree(worktreeDir: string): Promise<void> {
   await $`git worktree remove ${worktreeDir} --force`.quiet();
 }
 
+// Get the base directory for treefrog worktrees: /tmp/treefrog/<repo-name>/
+export async function getWorktreeBaseDir(): Promise<string> {
+  const repoName = await getRepoName();
+  return path.join(TREEFROG_BASE, repoName);
+}
+
+// Check if a path is inside the treefrog tmp area
+export function isTreefrogPath(p: string): boolean {
+  return p.startsWith(TREEFROG_BASE + path.sep);
+}
+
 // Check if current directory is a treefrog worktree
 export async function isTreefrogWorktree(): Promise<boolean> {
   const currentDir = process.cwd();
-  const worktreeList = await getWorktreeList();
+  if (!isTreefrogPath(currentDir)) return false;
 
-  // Parse worktree list
+  const worktreeList = await getWorktreeList();
   const lines = worktreeList.split("\n");
   for (const line of lines) {
-    if (line.startsWith("worktree ")) {
-      const worktreePath = line.substring(9);
-      if (currentDir === worktreePath) {
-        const dirName = path.basename(currentDir);
-        if (dirName.match(/^[^-]+-.+$/)) {
-          return true;
-        }
-      }
+    if (line.startsWith("worktree ") && line.substring(9) === currentDir) {
+      return true;
     }
   }
 

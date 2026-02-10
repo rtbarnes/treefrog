@@ -17,7 +17,8 @@
     "type": "tsgo --noEmit",
     "lint": "oxlint",
     "fmt": "oxfmt --write .",
-    "test": "bun test",
+    "test": "bun test --concurrent",
+    "test:serial": "bun test",
     "prepare": "husky"
   },
   "dependencies": {

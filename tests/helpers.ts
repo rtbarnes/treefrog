@@ -17,6 +17,19 @@ export interface TestRepo {
   cleanup: () => Promise<void>;
 }
 
+/** Run a test body with an isolated temp git repo and guaranteed cleanup. */
+export async function withTestRepo<T>(
+  run: (repo: TestRepo) => Promise<T>,
+  treefrogConfig?: string,
+): Promise<T> {
+  const repo = await createTestRepo(treefrogConfig);
+  try {
+    return await run(repo);
+  } finally {
+    await repo.cleanup();
+  }
+}
+
 /** Run the treefrog CLI as a subprocess with TREEFROG_BASE override. */
 export async function runCli(
   args: string[],

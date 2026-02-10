@@ -1,10 +1,12 @@
 # treefrog
 
-A simple tool for managing AI agent coding sessions with git worktrees.
-
-## Demo
+Run multiple AI coding agents in parallel on the same repo—each in its own isolated git worktree with shared config and dependencies.
 
 ![treefrog demo](treefrog-demo.gif)
+
+## Why?
+
+AI agents (Cursor, Copilot, Claude Code, etc.) work best with full repo access, but they can't share a working directory. Treefrog solves this by creating isolated worktrees where each agent gets its own branch and directory while sharing files you specify (`.env`, `node_modules`, etc.).
 
 ## Installation
 
@@ -75,130 +77,36 @@ treefrog spotlight implement-user-auth
 # List active agent worktrees
 treefrog list
 
-# Remove current agent worktree (run from agent directory)
-treefrog remove
+# Remove worktree directory (but keep branch as it is!)
+treefrog remove implement-user-auth
 ```
 
 ## Shell Completions
 
-treefrog includes shell autocomplete support for branch names and commands. Set up completions for your shell:
-
-### zsh
-
 ```bash
-# One-time setup
-source <(treefrog complete zsh)
-
-# Permanent setup
+# zsh
 treefrog complete zsh > ~/.treefrog-completion.zsh
 echo 'source ~/.treefrog-completion.zsh' >> ~/.zshrc
-```
 
-### bash
-
-```bash
-# One-time setup
-source <(treefrog complete bash)
-
-# Permanent setup
+# bash
 treefrog complete bash > ~/.treefrog-completion.bash
 echo 'source ~/.treefrog-completion.bash' >> ~/.bashrc
-```
 
-### fish
-
-```bash
+# fish
 treefrog complete fish > ~/.config/fish/completions/treefrog.fish
 ```
 
-### PowerShell
+## Building from Source
 
-```powershell
-treefrog complete powershell > ~/.treefrog-completion.ps1
-echo '. ~/.treefrog-completion.ps1' >> $PROFILE
-```
-
-After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog enter <TAB>`, `treefrog remove <TAB>`, or `treefrog spotlight <TAB>`.
-
-## What it does
-
-- Creates isolated git worktree: `../repo-branch-name/`
-- Creates new branch with your specified name or uses existing branch
-- Automatically shares/clones files based on `.treefrog` config
-- Optional `--shell/-s` opens an interactive shell in the new worktree with a muted gray banner line: `[treefrog:<branch>] [Ctrl-D to return]` (including zsh/oh-my-zsh)
-- `enter` command opens a shell in an existing treefrog worktree with the same banner
-- Spotlight command removes worktree and checks out branch in main repo
-- Preserves branches when removing worktrees
-
-Each agent gets its own directory and branch, solving the problem of multiple AI agents working in parallel on the same repository.
-
-## Building
-
-This project uses [Bun](https://bun.sh) to create standalone executables that bundle the entire runtime and dependencies into a single file. No installation of Bun, Node.js, or any dependencies is required to run the compiled executables.
-
-### Prerequisites
-
-- [Bun](https://bun.sh) v1.2.16 or later
-- TypeScript (peer dependency)
-
-### Build Commands
+Requires [Bun](https://bun.sh) v1.2.16+.
 
 ```bash
-# Install dependencies
 bun install
-
-# Build for current platform (creates ./treefrog)
-bun run build
-
-# Build for all supported platforms
-bun run build:all
-
-# Build for specific platforms
-bun run build:macos    # macOS ARM64 + x64
-bun run build:linux    # Linux x64 + ARM64
-bun run build:windows  # Windows x64
+bun run build          # current platform
+bun run build:all      # all platforms (macOS/Linux/Windows, x64/ARM64)
 ```
 
-### Build Output
-
-- **Local builds**: `treefrog` (current platform executable)
-- **Cross-platform builds**: `dist/treefrog-{platform}-{arch}`
-  - `dist/treefrog-macos-arm64`
-  - `dist/treefrog-macos-x64`
-  - `dist/treefrog-linux-x64`
-  - `dist/treefrog-linux-arm64`
-  - `dist/treefrog-windows-x64.exe`
-
-### Build Features
-
-- **Self-contained**: Includes Bun runtime and all dependencies
-- **Optimized**: Minified bundle with ~13.55 KB size reduction
-- **Debuggable**: Embedded sourcemaps for error tracing
-- **Fast startup**: Pre-bundled for quick execution
-- **Cross-platform**: Single build process for all supported platforms
-
-### Supported Platforms
-
-| Platform | Architecture          | Status |
-| -------- | --------------------- | ------ |
-| macOS    | ARM64 (Apple Silicon) | ✅     |
-| macOS    | x64 (Intel)           | ✅     |
-| Linux    | x64                   | ✅     |
-| Linux    | ARM64                 | ✅     |
-| Windows  | x64                   | ✅     |
-
-### Development
-
-```bash
-# Run directly with Bun (development)
-bun run src/index.ts --help
-
-# Run tests (if available)
-bun test
-
-# Type checking
-bun run tsc --noEmit
-```
+Output: `./treefrog` (local) or `dist/treefrog-{platform}-{arch}` (cross-platform).
 
 ## Configuration
 

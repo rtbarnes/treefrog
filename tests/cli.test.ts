@@ -65,4 +65,15 @@ describe("treefrog cli", () => {
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("Active treefrog worktrees");
   });
+
+  test("create help shows shell option", async () => {
+    repo = await createTestRepo();
+    const result = await runCli(["create", "--help"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("-s, --shell");
+  });
 });

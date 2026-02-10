@@ -6,6 +6,7 @@ export interface TreefrogConfig {
 
 export interface CreateArgs {
   branchName: string;
+  shell?: boolean;
 }
 
 export interface RemoveArgs {

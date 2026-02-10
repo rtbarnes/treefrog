@@ -16,7 +16,10 @@ export function buildProgram(): Command {
     .alias("c")
     .description("Create new agent worktree")
     .argument("<branch-name>")
-    .action((branchName: string) => handleCreate({ branchName }));
+    .option("-s, --shell", "Start an interactive shell in the new worktree")
+    .action((branchName: string, options: { shell?: boolean }) =>
+      handleCreate({ branchName, shell: options.shell }),
+    );
 
   program
     .command("remove")

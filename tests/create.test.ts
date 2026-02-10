@@ -117,4 +117,15 @@ describe("treefrog create", () => {
     const stat = await fs.stat(wtDir);
     expect(stat.isDirectory()).toBe(true);
   });
+
+  test("shell option skips interactive launch when no tty is attached", async () => {
+    repo = await createTestRepo();
+    const result = await runCli(["create", "shell-test", "--shell"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Skipping --shell because no interactive terminal is attached");
+  });
 });

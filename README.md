@@ -63,6 +63,9 @@ bun run src/index.ts
 # Create new agent worktree (uses .treefrog config for file sharing/cloning)
 treefrog create implement-user-auth
 
+# Create a worktree and open an interactive shell there
+treefrog create implement-user-auth --shell
+
 # Spotlight a worktree branch: remove worktree and checkout branch in main repo
 treefrog spotlight implement-user-auth
 
@@ -119,7 +122,7 @@ After setup, branch names will autocomplete when typing `treefrog create <TAB>`,
 - Creates isolated git worktree: `../repo-branch-name/`
 - Creates new branch with your specified name or uses existing branch
 - Automatically shares/clones files based on `.treefrog` config
-- Drops you in the worktree ready for your AI agent
+- Optional `--shell/-s` opens an interactive shell in the new worktree
 - Spotlight command removes worktree and checks out branch in main repo
 - Preserves branches when removing worktrees
 

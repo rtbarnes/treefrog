@@ -125,8 +125,8 @@ After setup, branch names will autocomplete when typing `treefrog create <TAB>`,
 - Creates isolated git worktree: `../repo-branch-name/`
 - Creates new branch with your specified name or uses existing branch
 - Automatically shares/clones files based on `.treefrog` config
-- Optional `--shell/-s` opens an interactive shell in the new worktree
-- `enter` command opens a shell in an existing treefrog worktree
+- Optional `--shell/-s` opens an interactive shell in the new worktree with a muted gray banner line: `[treefrog:<branch>] [Ctrl-D to return]` (including zsh/oh-my-zsh)
+- `enter` command opens a shell in an existing treefrog worktree with the same banner
 - Spotlight command removes worktree and checks out branch in main repo
 - Preserves branches when removing worktrees
 

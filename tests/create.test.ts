@@ -118,6 +118,35 @@ describe("treefrog create", () => {
     });
   });
 
+  test("--current creates worktree from current branch", async () => {
+    await withTestRepo(async (repo) => {
+      // Create and switch to a feature branch
+      await runCli(["create", "feature-branch"], {
+        cwd: repo.repoDir,
+        treefrogBase: repo.treefrogBase,
+      });
+      await runCli(["spotlight", "feature-branch"], {
+        cwd: repo.repoDir,
+        treefrogBase: repo.treefrogBase,
+      });
+      // Now main repo is on feature-branch
+
+      const result = await runCli(["create", "--current"], {
+        cwd: repo.repoDir,
+        treefrogBase: repo.treefrogBase,
+      });
+
+      expect(result.exitCode).toBe(0);
+      expect(result.stdout).toContain("Detaching HEAD to free branch");
+      expect(result.stdout).toContain("Worktree created successfully");
+
+      const repoName = path.basename(repo.repoDir);
+      const wtDir = path.join(repo.treefrogBase, repoName, "feature-branch");
+      const stat = await fs.stat(wtDir);
+      expect(stat.isDirectory()).toBe(true);
+    });
+  });
+
   test("shell option skips interactive launch when no tty is attached", async () => {
     await withTestRepo(async (repo) => {
       const result = await runCli(["create", "shell-test", "--shell"], {

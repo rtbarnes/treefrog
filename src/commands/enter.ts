@@ -26,5 +26,5 @@ export async function handleEnter(args: EnterArgs): Promise<void> {
   process.chdir(worktreePath);
 
   printSuccess(`You are now in: ${process.cwd()}`);
-  await startInteractiveShell(process.cwd());
+  await startInteractiveShell({ cwd: process.cwd(), promptContext: args.branchName });
 }

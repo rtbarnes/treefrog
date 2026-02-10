@@ -109,6 +109,11 @@ export async function checkoutBranch(branchName: string): Promise<void> {
   await $`git checkout ${branchName}`.quiet();
 }
 
+// Detach HEAD from the current branch
+export async function detachHead(): Promise<void> {
+  await $`git checkout --detach`.quiet();
+}
+
 // Find worktree path by branch name
 export async function findWorktreeByBranch(branchName: string): Promise<string | null> {
   const worktreeList = await getWorktreeList();

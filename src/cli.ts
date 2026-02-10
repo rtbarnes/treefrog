@@ -21,11 +21,19 @@ export function buildProgram(): Command {
     .command("create")
     .alias("c")
     .description("Create new agent worktree")
-    .argument("<branch-name>")
+    .argument("[branch-name]")
     .option("-s, --shell", "Start an interactive shell in the new worktree")
-    .action((branchName: string, options: { shell?: boolean }) =>
-      handleCreate({ branchName, shell: options.shell }),
-    );
+    .option("--current", "Create worktree from the current branch")
+    .action((branchName: string | undefined, options: { shell?: boolean; current?: boolean }) => {
+      if (!branchName && !options.current) {
+        throw new Error("branch-name is required unless --current is specified");
+      }
+      return handleCreate({
+        branchName: branchName ?? "",
+        shell: options.shell,
+        current: options.current,
+      });
+    });
 
   program
     .command("enter")

@@ -6,6 +6,8 @@ import {
   getMainRepoDir,
   getWorktreeBaseDir,
   createWorktree,
+  getCurrentBranch,
+  detachHead,
 } from "../services/git.js";
 import { parseTreefrogConfig, executeTreefrogConfig } from "../services/config.js";
 import { createSymlinks, copyFiles, directoryExists } from "../services/fs.js";
@@ -15,6 +17,16 @@ import { startInteractiveShell } from "../services/shell.js";
 // Create new agent worktree
 export async function handleCreate(args: CreateArgs): Promise<void> {
   await ensureGitRepository();
+
+  if (args.current) {
+    const branch = await getCurrentBranch();
+    if (!branch) {
+      throw new Error("Cannot use --current with a detached HEAD");
+    }
+    args.branchName = branch;
+    printInfo(`Detaching HEAD to free branch: ${branch}`);
+    await detachHead();
+  }
 
   const mainRepoDir = await getMainRepoDir();
   const baseDir = await getWorktreeBaseDir();
@@ -57,7 +69,7 @@ export async function handleCreate(args: CreateArgs): Promise<void> {
   printSuccess("Your environment is now agent ready!");
 
   if (args.shell) {
-    await startInteractiveShell(process.cwd());
+    await startInteractiveShell({ cwd: process.cwd(), promptContext: args.branchName });
     return;
   }
 

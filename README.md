@@ -66,6 +66,9 @@ treefrog create implement-user-auth
 # Create a worktree and open an interactive shell there
 treefrog create implement-user-auth --shell
 
+# Open a shell in an existing worktree
+treefrog enter implement-user-auth
+
 # Spotlight a worktree branch: remove worktree and checkout branch in main repo
 treefrog spotlight implement-user-auth
 
@@ -115,7 +118,7 @@ treefrog complete powershell > ~/.treefrog-completion.ps1
 echo '. ~/.treefrog-completion.ps1' >> $PROFILE
 ```
 
-After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog remove <TAB>`, or `treefrog spotlight <TAB>`.
+After setup, branch names will autocomplete when typing `treefrog create <TAB>`, `treefrog enter <TAB>`, `treefrog remove <TAB>`, or `treefrog spotlight <TAB>`.
 
 ## What it does
 
@@ -123,6 +126,7 @@ After setup, branch names will autocomplete when typing `treefrog create <TAB>`,
 - Creates new branch with your specified name or uses existing branch
 - Automatically shares/clones files based on `.treefrog` config
 - Optional `--shell/-s` opens an interactive shell in the new worktree
+- `enter` command opens a shell in an existing treefrog worktree
 - Spotlight command removes worktree and checks out branch in main repo
 - Preserves branches when removing worktrees
 

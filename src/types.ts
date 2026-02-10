@@ -17,6 +17,10 @@ export interface SpotlightArgs {
   branchName: string;
 }
 
+export interface EnterArgs {
+  branchName: string;
+}
+
 export class NotInGitRepoError extends Error {
   constructor(message = "Not in a git repository") {
     super(message);

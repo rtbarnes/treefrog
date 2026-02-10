@@ -62,4 +62,11 @@ export function registerCompletions(completion: RootCommand): void {
       complete(branch, "active worktree");
     }
   });
+
+  const enterCmd = completion.commands.get("enter");
+  enterCmd?.argument("branch-name", (complete: Complete) => {
+    for (const branch of getWorktreeBranches()) {
+      complete(branch, "active worktree");
+    }
+  });
 }

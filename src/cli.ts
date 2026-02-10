@@ -1,6 +1,12 @@
 import { Command } from "commander";
 import tab from "@bomb.sh/tab/commander";
-import { handleCreate, handleRemove, handleList, handleSpotlight } from "./commands/index.js";
+import {
+  handleCreate,
+  handleEnter,
+  handleRemove,
+  handleList,
+  handleSpotlight,
+} from "./commands/index.js";
 import { registerCompletions } from "./completions.js";
 
 export function buildProgram(): Command {
@@ -20,6 +26,13 @@ export function buildProgram(): Command {
     .action((branchName: string, options: { shell?: boolean }) =>
       handleCreate({ branchName, shell: options.shell }),
     );
+
+  program
+    .command("enter")
+    .alias("e")
+    .description("Open a shell in an existing agent worktree")
+    .argument("<branch-name>")
+    .action((branchName: string) => handleEnter({ branchName }));
 
   program
     .command("remove")

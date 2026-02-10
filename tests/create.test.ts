@@ -126,6 +126,8 @@ describe("treefrog create", () => {
     });
 
     expect(result.exitCode).toBe(0);
-    expect(result.stdout).toContain("Skipping --shell because no interactive terminal is attached");
+    expect(result.stdout).toContain(
+      "Skipping shell launch because no interactive terminal is attached",
+    );
   });
 });

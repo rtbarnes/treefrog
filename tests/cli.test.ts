@@ -66,6 +66,22 @@ describe("treefrog cli", () => {
     expect(result.stdout).toContain("Active treefrog worktrees");
   });
 
+  test("'e' alias works for enter", async () => {
+    repo = await createTestRepo();
+    await runCli(["create", "enter-alias"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    const result = await runCli(["e", "enter-alias"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Entering treefrog worktree");
+  });
+
   test("create help shows shell option", async () => {
     repo = await createTestRepo();
     const result = await runCli(["create", "--help"], {
@@ -75,5 +91,16 @@ describe("treefrog cli", () => {
 
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("-s, --shell");
+  });
+
+  test("enter help is available", async () => {
+    repo = await createTestRepo();
+    const result = await runCli(["enter", "--help"], {
+      cwd: repo.repoDir,
+      treefrogBase: repo.treefrogBase,
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.stdout).toContain("Open a shell in an existing agent worktree");
   });
 });

@@ -14,7 +14,7 @@ export interface RemoveArgs {
   branchName: string;
 }
 
-export interface SpotlightArgs {
+export interface CheckoutArgs {
   branchName: string;
 }
 

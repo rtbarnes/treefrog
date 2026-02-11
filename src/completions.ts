@@ -56,8 +56,8 @@ export function registerCompletions(completion: RootCommand): void {
     }
   });
 
-  const spotlightCmd = completion.commands.get("spotlight");
-  spotlightCmd?.argument("branch-name", (complete: Complete) => {
+  const checkoutCmd = completion.commands.get("checkout");
+  checkoutCmd?.argument("branch-name", (complete: Complete) => {
     for (const branch of getWorktreeBranches()) {
       complete(branch, "active worktree");
     }

@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 import { runCli, withTestRepo } from "./helpers.js";
 
-describe("treefrog spotlight", () => {
+describe("treefrog checkout", () => {
   test("removes worktree and checks out branch in main repo", async () => {
     await withTestRepo(async (repo) => {
       await runCli(["create", "spot-branch"], {
@@ -16,7 +16,7 @@ describe("treefrog spotlight", () => {
       const wtDir = path.join(repo.treefrogBase, repoName, "spot-branch");
       expect((await fs.stat(wtDir)).isDirectory()).toBe(true);
 
-      const result = await runCli(["spotlight", "spot-branch"], {
+      const result = await runCli(["checkout", "spot-branch"], {
         cwd: repo.repoDir,
         treefrogBase: repo.treefrogBase,
       });
@@ -37,7 +37,7 @@ describe("treefrog spotlight", () => {
 
   test("errors when branch has no worktree", async () => {
     await withTestRepo(async (repo) => {
-      const result = await runCli(["spotlight", "nonexistent"], {
+      const result = await runCli(["checkout", "nonexistent"], {
         cwd: repo.repoDir,
         treefrogBase: repo.treefrogBase,
       });

@@ -71,8 +71,8 @@ treefrog create implement-user-auth --shell
 # Open a shell in an existing worktree
 treefrog enter implement-user-auth
 
-# Spotlight a worktree branch: remove worktree and checkout branch in main repo
-treefrog spotlight implement-user-auth
+# Checkout a worktree branch: remove worktree and checkout branch in main repo
+treefrog checkout implement-user-auth
 
 # List active agent worktrees
 treefrog list

@@ -5,7 +5,7 @@ import {
   handleEnter,
   handleRemove,
   handleList,
-  handleSpotlight,
+  handleCheckout,
 } from "./commands/index.js";
 import { registerCompletions } from "./completions.js";
 
@@ -56,10 +56,10 @@ export function buildProgram(): Command {
     .action(() => handleList());
 
   program
-    .command("spotlight")
+    .command("checkout")
     .description("Remove worktree and checkout branch in main repo")
     .argument("<branch-name>")
-    .action((branchName: string) => handleSpotlight({ branchName }));
+    .action((branchName: string) => handleCheckout({ branchName }));
 
   const completion = tab(program);
   registerCompletions(completion);

@@ -125,7 +125,7 @@ describe("treefrog create", () => {
         cwd: repo.repoDir,
         treefrogBase: repo.treefrogBase,
       });
-      await runCli(["spotlight", "feature-branch"], {
+      await runCli(["checkout", "feature-branch"], {
         cwd: repo.repoDir,
         treefrogBase: repo.treefrogBase,
       });

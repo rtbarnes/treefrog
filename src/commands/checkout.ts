@@ -1,5 +1,5 @@
 import path from "path";
-import type { SpotlightArgs } from "../types.js";
+import type { CheckoutArgs } from "../types.js";
 import {
   ensureGitRepository,
   findWorktreeByBranch,
@@ -9,8 +9,8 @@ import {
 } from "../services/git.js";
 import { printInfo, printSuccess } from "../services/ui.js";
 
-// Spotlight a worktree branch: remove worktree and checkout branch in main repo
-export async function handleSpotlight(args: SpotlightArgs): Promise<void> {
+// Checkout a worktree branch: remove worktree and checkout branch in main repo
+export async function handleCheckout(args: CheckoutArgs): Promise<void> {
   await ensureGitRepository();
 
   // Find the worktree for this branch
@@ -22,12 +22,12 @@ export async function handleSpotlight(args: SpotlightArgs): Promise<void> {
   // Get main repo directory
   const mainRepoDir = await findMainRepo();
 
-  // Prevent spotlighting the main repo itself
+  // Prevent checking out the main repo itself
   if (worktreePath === mainRepoDir) {
-    throw new Error("Cannot spotlight the main repository");
+    throw new Error("Cannot checkout the main repository");
   }
 
-  printInfo(`Spotlighting branch: ${args.branchName}`);
+  printInfo(`Checking out branch: ${args.branchName}`);
   printInfo(`Worktree: ${path.basename(worktreePath)}`);
 
   // Change to main repo directory

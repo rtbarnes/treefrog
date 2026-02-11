@@ -5,12 +5,10 @@ import { FileNotFoundError } from "../types.js";
 import { printInfo } from "./ui.js";
 
 // Create shared file/directory symlinks
-export async function createSymlinks(shareFiles: string, mainRepoDir: string): Promise<void> {
-  if (!shareFiles) return;
+export async function createSymlinks(shareFiles: string[], mainRepoDir: string): Promise<void> {
+  if (shareFiles.length === 0) return;
 
-  const files = shareFiles.split(",").map((f) => f.trim());
-
-  for (const file of files) {
+  for (const file of shareFiles) {
     const mainPath = path.join(mainRepoDir, file);
 
     try {
@@ -42,12 +40,10 @@ export async function createSymlinks(shareFiles: string, mainRepoDir: string): P
 }
 
 // Copy files/directories from main repo
-export async function copyFiles(cloneFiles: string, mainRepoDir: string): Promise<void> {
-  if (!cloneFiles) return;
+export async function copyFiles(cloneFiles: string[], mainRepoDir: string): Promise<void> {
+  if (cloneFiles.length === 0) return;
 
-  const files = cloneFiles.split(",").map((f) => f.trim());
-
-  for (const file of files) {
+  for (const file of cloneFiles) {
     const mainPath = path.join(mainRepoDir, file);
 
     try {

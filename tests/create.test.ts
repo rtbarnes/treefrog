@@ -22,56 +22,98 @@ describe("treefrog create", () => {
   });
 
   test("share directive creates symlinks", async () => {
-    await withTestRepo(async (repo) => {
-      const result = await runCli(["create", "share-test"], {
-        cwd: repo.repoDir,
-        treefrogBase: repo.treefrogBase,
-      });
+    await withTestRepo(
+      async (repo) => {
+        const result = await runCli(["create", "share-test"], {
+          cwd: repo.repoDir,
+          treefrogBase: repo.treefrogBase,
+        });
 
-      expect(result.exitCode).toBe(0);
+        expect(result.exitCode).toBe(0);
 
-      const repoName = path.basename(repo.repoDir);
-      const wtDir = path.join(repo.treefrogBase, repoName, "share-test");
+        const repoName = path.basename(repo.repoDir);
+        const wtDir = path.join(repo.treefrogBase, repoName, "share-test");
 
-      const fileStat = await fs.lstat(path.join(wtDir, "untracked.txt"));
-      expect(fileStat.isSymbolicLink()).toBe(true);
+        const fileStat = await fs.lstat(path.join(wtDir, "untracked.txt"));
+        expect(fileStat.isSymbolicLink()).toBe(true);
 
-      const dirStat = await fs.lstat(path.join(wtDir, "untracked-dir"));
-      expect(dirStat.isSymbolicLink()).toBe(true);
-    }, "share=untracked.txt,untracked-dir");
+        const dirStat = await fs.lstat(path.join(wtDir, "untracked-dir"));
+        expect(dirStat.isSymbolicLink()).toBe(true);
+      },
+      { shareFiles: ["untracked.txt", "untracked-dir"] },
+    );
   });
 
   test("clone directive copies files", async () => {
-    await withTestRepo(async (repo) => {
-      const result = await runCli(["create", "clone-test"], {
-        cwd: repo.repoDir,
-        treefrogBase: repo.treefrogBase,
-      });
+    await withTestRepo(
+      async (repo) => {
+        const result = await runCli(["create", "clone-test"], {
+          cwd: repo.repoDir,
+          treefrogBase: repo.treefrogBase,
+        });
 
-      expect(result.exitCode).toBe(0);
+        expect(result.exitCode).toBe(0);
 
-      const repoName = path.basename(repo.repoDir);
-      const wtDir = path.join(repo.treefrogBase, repoName, "clone-test");
+        const repoName = path.basename(repo.repoDir);
+        const wtDir = path.join(repo.treefrogBase, repoName, "clone-test");
 
-      const fileStat = await fs.lstat(path.join(wtDir, "untracked.txt"));
-      expect(fileStat.isSymbolicLink()).toBe(false);
-      expect(fileStat.isFile()).toBe(true);
+        const fileStat = await fs.lstat(path.join(wtDir, "untracked.txt"));
+        expect(fileStat.isSymbolicLink()).toBe(false);
+        expect(fileStat.isFile()).toBe(true);
 
-      const content = await fs.readFile(path.join(wtDir, "untracked.txt"), "utf-8");
-      expect(content).toBe("untracked-content");
+        const content = await fs.readFile(path.join(wtDir, "untracked.txt"), "utf-8");
+        expect(content).toBe("untracked-content");
 
-      const dirStat = await fs.lstat(path.join(wtDir, "untracked-dir"));
-      expect(dirStat.isDirectory()).toBe(true);
+        const dirStat = await fs.lstat(path.join(wtDir, "untracked-dir"));
+        expect(dirStat.isDirectory()).toBe(true);
 
-      const nested = await fs.readFile(path.join(wtDir, "untracked-dir", "nested.txt"), "utf-8");
-      expect(nested).toBe("nested-content");
-    }, "clone=untracked.txt,untracked-dir");
+        const nested = await fs.readFile(path.join(wtDir, "untracked-dir", "nested.txt"), "utf-8");
+        expect(nested).toBe("nested-content");
+      },
+      { cloneFiles: ["untracked.txt", "untracked-dir"] },
+    );
   });
 
-  test("commands section executes", async () => {
-    const config = ["[commands]", 'echo "hello" > cmd-output.txt'].join("\n");
+  test("commands config executes", async () => {
+    await withTestRepo(
+      async (repo) => {
+        const result = await runCli(["create", "cmd-test"], {
+          cwd: repo.repoDir,
+          treefrogBase: repo.treefrogBase,
+        });
+
+        expect(result.exitCode).toBe(0);
+
+        const repoName = path.basename(repo.repoDir);
+        const wtDir = path.join(repo.treefrogBase, repoName, "cmd-test");
+        const output = await fs.readFile(path.join(wtDir, "cmd-output.txt"), "utf-8");
+        expect(output.trim()).toBe("hello");
+      },
+      { commands: ['echo "hello" > cmd-output.txt'] },
+    );
+  });
+
+  test("project config lookup is scoped to canonical repo path", async () => {
     await withTestRepo(async (repo) => {
-      const result = await runCli(["create", "cmd-test"], {
+      const configPath = path.join(repo.configHome, "treefrog", "config.json");
+      await fs.mkdir(path.dirname(configPath), { recursive: true });
+      await fs.writeFile(
+        configPath,
+        JSON.stringify(
+          {
+            version: 1,
+            projects: {
+              "/different/repo/path": {
+                shareFiles: ["untracked.txt"],
+              },
+            },
+          },
+          null,
+          2,
+        ),
+      );
+
+      const result = await runCli(["create", "scope-test"], {
         cwd: repo.repoDir,
         treefrogBase: repo.treefrogBase,
       });
@@ -79,10 +121,31 @@ describe("treefrog create", () => {
       expect(result.exitCode).toBe(0);
 
       const repoName = path.basename(repo.repoDir);
-      const wtDir = path.join(repo.treefrogBase, repoName, "cmd-test");
-      const output = await fs.readFile(path.join(wtDir, "cmd-output.txt"), "utf-8");
-      expect(output.trim()).toBe("hello");
-    }, config);
+      const wtDir = path.join(repo.treefrogBase, repoName, "scope-test");
+      const sharedPath = path.join(wtDir, "untracked.txt");
+      const sharedExists = await fs
+        .access(sharedPath)
+        .then(() => true)
+        .catch(() => false);
+      expect(sharedExists).toBe(false);
+    });
+  });
+
+  test("malformed global config errors clearly", async () => {
+    await withTestRepo(async (repo) => {
+      const configPath = path.join(repo.configHome, "treefrog", "config.json");
+      await fs.mkdir(path.dirname(configPath), { recursive: true });
+      await fs.writeFile(configPath, "{not-json");
+
+      const result = await runCli(["create", "bad-config"], {
+        cwd: repo.repoDir,
+        treefrogBase: repo.treefrogBase,
+      });
+
+      expect(result.exitCode).not.toBe(0);
+      expect(result.stderr).toContain("Invalid treefrog config JSON");
+      expect(result.stderr).toContain(configPath);
+    });
   });
 
   test("duplicate branch name errors", async () => {

@@ -62,7 +62,7 @@ bun run src/index.ts
 ## Usage
 
 ```bash
-# Create new agent worktree (uses .treefrog config for file sharing/cloning)
+# Create new agent worktree (uses global treefrog config)
 treefrog create implement-user-auth
 
 # Create a worktree and open an interactive shell there
@@ -110,36 +110,62 @@ Output: `./treefrog` (local) or `dist/treefrog-{platform}-{arch}` (cross-platfor
 
 ## Configuration
 
-You can create a `.treefrog` file in your repository root to configure default file sharing and run commands automatically when creating new worktrees.
+Treefrog reads configuration from a global JSON file:
 
-### .treefrog file format
+- `$XDG_CONFIG_HOME/treefrog/config.json` when `XDG_CONFIG_HOME` is set
+- `~/.config/treefrog/config.json` otherwise
 
-The `.treefrog` file supports configuration directives and command sections:
+Config is project-scoped by canonical repository root path (`realpath` absolute path).
 
-```bash
-# Configuration section (at the top)
-share = .env,.env.local,package.json
-clone = secrets.json,config/database.yml
+### `config.json` format
 
-# Commands section
-[commands]
-# Install dependencies
-npm install
-
-# Set up environment
-echo "Setting up development environment..."
-cp .env.example .env.local
-
-# Start development server in background
-npm run dev &
+```json
+{
+  "version": 1,
+  "projects": {
+    "/absolute/path/to/repo": {
+      "shareFiles": [".env", ".env.local", "package.json"],
+      "cloneFiles": ["secrets.json", "config/database.yml"],
+      "commands": [
+        "npm install",
+        "echo \"Setting up development environment...\"",
+        "cp .env.example .env.local"
+      ]
+    }
+  }
+}
 ```
 
 ### Configuration Options
 
-- `share = file1,file2,...` - Files to symlink from main repo
-- `clone = file1,file2,...` - Files to copy from main repo
-- `[commands]` section - Bash commands to execute after worktree creation
+- `shareFiles` - Paths to symlink from main repo into the new worktree
+- `cloneFiles` - Paths to copy from main repo into the new worktree
+- `commands` - Shell commands to run after file operations
 
-Both `share` and `clone` directives are applied when creating a worktree. Commands in `[commands]` section always execute after file operations.
+If no matching project entry exists, treefrog proceeds with no file or command actions.
 
-Comments (lines starting with `#`) and empty lines are ignored throughout the file.
+### Migration from `.treefrog`
+
+Old:
+
+```bash
+share=.env,.env.local
+clone=secrets.json
+[commands]
+npm install
+```
+
+New:
+
+```json
+{
+  "version": 1,
+  "projects": {
+    "/absolute/path/to/repo": {
+      "shareFiles": [".env", ".env.local"],
+      "cloneFiles": ["secrets.json"],
+      "commands": ["npm install"]
+    }
+  }
+}
+```

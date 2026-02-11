@@ -6,7 +6,7 @@ import type { RootCommand, Complete } from "@bomb.sh/tab";
 
 function getLocalBranches(): string[] {
   try {
-    const output = execSync('git branch --format="%(refname:short)"', {
+    const output = execSync('git branch --sort=-committerdate --format="%(refname:short)"', {
       encoding: "utf-8",
     });
     return output.trim().split("\n").filter(Boolean);

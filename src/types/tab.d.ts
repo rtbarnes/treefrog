@@ -4,6 +4,7 @@ declare module "@bomb.sh/tab" {
   export type ArgumentHandler = (this: any, complete: Complete, options: OptionsMap) => void;
   export interface RootCommand {
     commands: Map<string, any>;
+    setup(name: string, executable: string, shell: string): void;
   }
   export const t: RootCommand;
   export default t;

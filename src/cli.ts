@@ -63,6 +63,10 @@ export function buildProgram(): Command {
 
   const completion = tab(program);
   registerCompletions(completion);
+  const completeCommand = program.commands.find((command) => command.name() === "complete");
+  completeCommand?.action((shell?: string) => {
+    completion.setup(program.name(), program.name(), shell ?? "");
+  });
 
   return program;
 }

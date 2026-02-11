@@ -1,7 +1,12 @@
 export interface TreefrogConfig {
-  shareFiles?: string;
-  cloneFiles?: string;
+  shareFiles?: string[];
+  cloneFiles?: string[];
   commands?: string[];
+}
+
+export interface TreefrogGlobalConfig {
+  version: 1;
+  projects: Record<string, TreefrogConfig>;
 }
 
 export interface CreateArgs {

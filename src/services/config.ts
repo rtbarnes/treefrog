@@ -1,68 +1,121 @@
 import { $ } from "bun";
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
-import type { TreefrogConfig } from "../types.js";
+import type { TreefrogConfig, TreefrogGlobalConfig } from "../types.js";
 import { printInfo, printError } from "./ui.js";
 
-// Parse .treefrog configuration file for settings
-export async function parseTreefrogConfig(mainRepoDir: string): Promise<TreefrogConfig> {
-  const configFile = path.join(mainRepoDir, ".treefrog");
-  const config: TreefrogConfig = { commands: [] };
-
-  try {
-    const content = await fs.readFile(configFile, "utf-8");
-    const lines = content.split("\n");
-    let inCommandsSection = false;
-
-    for (const line of lines) {
-      const trimmedLine = line.trim();
-
-      // Skip empty lines
-      if (!trimmedLine) continue;
-
-      // Handle section markers
-      if (trimmedLine === "[commands]") {
-        inCommandsSection = true;
-        continue;
-      } else if (trimmedLine.match(/^\[[^\]]+\]$/)) {
-        inCommandsSection = false;
-        continue;
-      }
-
-      // Skip comments
-      if (trimmedLine.startsWith("#")) continue;
-
-      // Parse configuration directives
-      if (trimmedLine.match(/^\s*share\s*=/)) {
-        const parts = trimmedLine.split("=");
-        if (parts[1]) {
-          config.shareFiles = parts[1].trim();
-        }
-      } else if (trimmedLine.match(/^\s*clone\s*=/)) {
-        const parts = trimmedLine.split("=");
-        if (parts[1]) {
-          config.cloneFiles = parts[1].trim();
-        }
-      } else if (inCommandsSection && config.commands) {
-        config.commands.push(trimmedLine);
-      }
-    }
-  } catch {
-    // Config file doesn't exist, return empty config
+function getTreefrogConfigPath(): string {
+  const xdgConfigHome = process.env.XDG_CONFIG_HOME?.trim();
+  if (xdgConfigHome) {
+    return path.join(xdgConfigHome, "treefrog", "config.json");
   }
 
-  return config;
+  const home = process.env.HOME?.trim() || os.homedir();
+  if (!home) {
+    throw new Error("Could not resolve config directory. Set HOME or XDG_CONFIG_HOME.");
+  }
+  return path.join(home, ".config", "treefrog", "config.json");
 }
 
-// Execute commands from .treefrog configuration file
+function validateStringArray(
+  value: unknown,
+  fieldName: string,
+  configPath: string,
+  repoKey: string,
+): string[] {
+  if (value === undefined) {
+    return [];
+  }
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
+    throw new Error(
+      `Invalid treefrog config at ${configPath}: projects["${repoKey}"].${fieldName} must be a string array`,
+    );
+  }
+  return value;
+}
+
+function parseProjectConfig(value: unknown, configPath: string, repoKey: string): TreefrogConfig {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(
+      `Invalid treefrog config at ${configPath}: projects["${repoKey}"] must be an object`,
+    );
+  }
+
+  const projectConfig = value as Record<string, unknown>;
+  return {
+    shareFiles: validateStringArray(projectConfig.shareFiles, "shareFiles", configPath, repoKey),
+    cloneFiles: validateStringArray(projectConfig.cloneFiles, "cloneFiles", configPath, repoKey),
+    commands: validateStringArray(projectConfig.commands, "commands", configPath, repoKey),
+  };
+}
+
+function parseGlobalConfig(value: unknown, configPath: string): TreefrogGlobalConfig {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error(
+      `Invalid treefrog config at ${configPath}: expected {"version":1,"projects":{...}}`,
+    );
+  }
+
+  const config = value as Record<string, unknown>;
+  if (config.version !== 1) {
+    throw new Error(`Invalid treefrog config at ${configPath}: version must be 1`);
+  }
+  if (!config.projects || typeof config.projects !== "object" || Array.isArray(config.projects)) {
+    throw new Error(`Invalid treefrog config at ${configPath}: projects must be an object map`);
+  }
+
+  return {
+    version: 1,
+    projects: config.projects as Record<string, TreefrogConfig>,
+  };
+}
+
+// Parse global JSON config for this repository.
+export async function parseTreefrogConfig(mainRepoDir: string): Promise<TreefrogConfig> {
+  const configPath = getTreefrogConfigPath();
+  const repoKey = await fs.realpath(mainRepoDir);
+
+  try {
+    const content = await fs.readFile(configPath, "utf-8");
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(content);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : String(error);
+      throw new Error(`Invalid treefrog config JSON at ${configPath}: ${reason}`);
+    }
+
+    const globalConfig = parseGlobalConfig(parsed, configPath);
+    const projectConfig = (globalConfig.projects as Record<string, unknown>)[repoKey];
+    if (projectConfig === undefined) {
+      return { shareFiles: [], cloneFiles: [], commands: [] };
+    }
+
+    return parseProjectConfig(projectConfig, configPath, repoKey);
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as NodeJS.ErrnoException).code === "ENOENT"
+    ) {
+      return { shareFiles: [], cloneFiles: [], commands: [] };
+    }
+    throw error;
+  }
+}
+
+// Execute commands from the configured project setup.
 export async function executeTreefrogConfig(config: TreefrogConfig): Promise<void> {
-  if (!config.commands || config.commands.length === 0) {
+  const commands = config.commands ?? [];
+  if (commands.length === 0) {
     return;
   }
 
   printInfo("Executing configuration commands...");
 
-  for (const command of config.commands) {
+  for (const command of commands) {
     if (command.trim()) {
       printInfo(`Executing: ${command}`);
       try {

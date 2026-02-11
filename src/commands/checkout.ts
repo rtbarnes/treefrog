@@ -6,6 +6,11 @@ import {
   findMainRepo,
   removeWorktree,
   checkoutBranch,
+  hasUncommittedChanges,
+  createStash,
+  findStashRefByMessage,
+  applyStash,
+  dropStash,
 } from "../services/git.js";
 import { printInfo, printSuccess } from "../services/ui.js";
 
@@ -30,17 +35,64 @@ export async function handleCheckout(args: CheckoutArgs): Promise<void> {
   printInfo(`Checking out branch: ${args.branchName}`);
   printInfo(`Worktree: ${path.basename(worktreePath)}`);
 
-  // Change to main repo directory
+  let stashRef: string | null = null;
+  if (await hasUncommittedChanges(worktreePath)) {
+    const stashMessage = buildCheckoutStashMessage(args.branchName);
+    printInfo("Uncommitted changes detected; stashing worktree changes...");
+    await createStash(worktreePath, stashMessage);
+    stashRef = await findStashRefByMessage(mainRepoDir, stashMessage);
+    if (!stashRef) {
+      throw new Error("Failed to locate stashed changes after stashing worktree");
+    }
+    printInfo(`Saved worktree changes in ${stashRef}`);
+  }
+
   process.chdir(mainRepoDir);
 
-  // Remove the worktree
-  printInfo("Removing worktree...");
-  await removeWorktree(worktreePath);
+  try {
+    printInfo("Removing worktree...");
+    await removeWorktree(worktreePath);
 
-  // Checkout the branch in main repo
-  printInfo(`Checking out branch '${args.branchName}' in main repo...`);
-  await checkoutBranch(args.branchName);
+    printInfo(`Checking out branch '${args.branchName}' in main repo...`);
+    await checkoutBranch(args.branchName);
+  } catch (error) {
+    if (stashRef) {
+      throw buildStashRecoveryError(
+        "Checkout did not complete, but your changes were preserved in stash",
+        stashRef,
+        error,
+      );
+    }
+    throw error;
+  }
+
+  if (stashRef) {
+    try {
+      printInfo(`Restoring stashed changes from ${stashRef}...`);
+      await applyStash(mainRepoDir, stashRef);
+      await dropStash(mainRepoDir, stashRef);
+      printInfo("Restored uncommitted changes in main repository");
+    } catch (error) {
+      throw buildStashRecoveryError(
+        "Checked out branch, but failed to restore stashed changes automatically",
+        stashRef,
+        error,
+      );
+    }
+  }
 
   printSuccess(`Branch '${args.branchName}' is now active in main repository!`);
   printInfo(`You are now in: ${process.cwd()}`);
+}
+
+function buildCheckoutStashMessage(branchName: string): string {
+  const uniqueId = Math.random().toString(36).slice(2, 10);
+  return `treefrog-checkout:${branchName}:${Date.now()}:${uniqueId}`;
+}
+
+function buildStashRecoveryError(prefix: string, stashRef: string, error: unknown): Error {
+  const details = error instanceof Error ? error.message : String(error);
+  return new Error(
+    `${prefix}. Run 'git stash apply --index ${stashRef}' to recover.\nOriginal error: ${details}`,
+  );
 }

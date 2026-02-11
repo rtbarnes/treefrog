@@ -77,6 +77,49 @@ export async function removeWorktree(worktreeDir: string): Promise<void> {
   await $`git worktree remove ${worktreeDir} --force`.quiet();
 }
 
+// Check if a repository has any uncommitted changes
+export async function hasUncommittedChanges(repoDir: string): Promise<boolean> {
+  const result = await $`git status --porcelain`.cwd(repoDir).text();
+  return result.trim().length > 0;
+}
+
+// Create a stash with a specific message, including untracked files
+export async function createStash(repoDir: string, stashMessage: string): Promise<void> {
+  await $`git stash push -u -m ${stashMessage}`.cwd(repoDir).quiet();
+}
+
+// Find a stash reference by exact stash message
+export async function findStashRefByMessage(
+  repoDir: string,
+  stashMessage: string,
+): Promise<string | null> {
+  const stashList = await $`git stash list --format=%gd%x09%s`.cwd(repoDir).text();
+  const lines = stashList.split("\n");
+
+  for (const line of lines) {
+    if (!line.trim()) continue;
+
+    const [stashRef, ...messageParts] = line.split("\t");
+    if (!stashRef) continue;
+    const message = messageParts.join("\t");
+    if (message.includes(stashMessage)) {
+      return stashRef;
+    }
+  }
+
+  return null;
+}
+
+// Apply stash in a repository and restore index state
+export async function applyStash(repoDir: string, stashRef: string): Promise<void> {
+  await $`git stash apply --index ${stashRef}`.cwd(repoDir).quiet();
+}
+
+// Drop stash reference after successful restore
+export async function dropStash(repoDir: string, stashRef: string): Promise<void> {
+  await $`git stash drop ${stashRef}`.cwd(repoDir).quiet();
+}
+
 // Get the base directory for treefrog worktrees: /tmp/treefrog/<repo-name>/
 export async function getWorktreeBaseDir(): Promise<string> {
   const repoName = await getRepoName();
